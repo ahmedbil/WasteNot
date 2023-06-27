@@ -30,15 +30,15 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
 
         // Set up listeners for the bottom navigation drawer.
-        navbarView.setOnNavigationItemSelectedListener { item ->
+        navbarView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.page_1 -> {
+                R.id.page_recipes -> {
                     topAppBar.setTitle(R.string.recipes_title)
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
                     true
                 }
 
-                R.id.page_2 -> {
+                R.id.page_inventory -> {
                     topAppBar.setTitle(R.string.inventory_title)
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
                     true
