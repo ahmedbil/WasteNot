@@ -1,6 +1,7 @@
 package com.example.androidapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -49,7 +50,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val recipeFilterButton = menu.findItem(R.id.action_recipe_filter)
+        //recipeFilterButton.isVisible = topAppBar.title != "Recipes"
+        Log.i("Condition", recipeFilterButton.isVisible.toString())
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
