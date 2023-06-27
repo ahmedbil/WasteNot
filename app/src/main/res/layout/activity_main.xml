@@ -8,15 +8,16 @@
         tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:background="#FFFFFF">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleCentered="true"
-            app:title="@string/recipes_title"/>
+            app:title="@string/recipes_title"
+            app:menu="@menu/menu_main" app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
