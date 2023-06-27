@@ -1,20 +1,20 @@
 package com.example.androidapp
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.androidapp.databinding.ActivityMainBinding
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navbarView: BottomNavigationView
+    private lateinit var fragmentContainer: ConstraintLayout
+    private lateinit var topAppBar: MaterialToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,15 +22,30 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        navbarView = findViewById(R.id.bottom_navigation)
+        fragmentContainer = findViewById(R.id.fragment_container)
+        topAppBar = findViewById(R.id.top_app_bar)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        // Load the recipes page by default.
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        // Set up listeners for the bottom navigation drawer.
+        navbarView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.page_recipes -> {
+                    topAppBar.setTitle(R.string.recipes_title)
+                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
+                    true
+                }
+
+                R.id.page_inventory -> {
+                    topAppBar.setTitle(R.string.inventory_title)
+                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
+                    true
+                }
+
+                else -> false
+            }
         }
     }
 
@@ -48,11 +63,5 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
     }
 }
