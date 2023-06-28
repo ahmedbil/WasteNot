@@ -15,10 +15,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navbarView: BottomNavigationView
     private lateinit var fragmentContainer: ConstraintLayout
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var nwManager: NetworkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        nwManager = NetworkManager("pixa.cubetex.net:8080")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
