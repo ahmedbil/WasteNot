@@ -15,6 +15,7 @@
             android:id="@+id/top_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:titleCentered="true"
             app:title="@string/recipes_title"/>
 
     </com.google.android.material.appbar.AppBarLayout>
