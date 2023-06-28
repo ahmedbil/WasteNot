@@ -1,0 +1,27 @@
+syntax="proto3";
+
+package wastenot;
+
+option java_package = "com.cs446_35.wastenot";
+
+message Amount {
+    Unit unit = 1;
+	string unitStr = 2;
+	double value = 3;
+}
+
+enum Unit {
+    UnitNone = 0;
+	UnitAbstract = 1;
+	UnitCup = 2;
+	UnitPint = 3;
+	UnitFlOz = 4;
+	UnitTsp = 5;
+	UnitTbsp = 6;
+	UnitOz = 7;
+	UnitLb = 8;
+	UnitGram = 9;
+	UnitKg = 10;
+	UnitQuanity = 11;
+	UnitFraction = 12;
+}

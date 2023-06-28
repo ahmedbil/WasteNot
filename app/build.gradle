@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf'
 }
+
+apply plugin: 'com.google.protobuf'
 
 android {
     namespace 'com.example.androidapp'
@@ -33,10 +36,50 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs += 'build/generated/source/proto/main/java'
+            }
+            kotlin {
+                srcDirs += 'build/generated/source/proto/main/kotlin'
+            }
+            proto {
+                srcDir 'src/main/proto' // default value
+            }
+        }
+    }
 }
 
-dependencies {
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.19.2'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.47.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+                kotlin { option 'lite' }
+            }
+            task.plugins {
+                grpc { option 'lite' }
+            }
+        }
+    }
+}
 
+
+dependencies {
+    implementation 'io.grpc:grpc-okhttp:1.47.0'
+    implementation 'io.grpc:grpc-protobuf-lite:1.47.0'
+    implementation 'io.grpc:grpc-stub:1.47.0'
+    implementation 'org.apache.tomcat:annotations-api:6.0.53'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -47,3 +90,4 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+

@@ -1,0 +1,46 @@
+syntax="proto3";
+
+package wastenot;
+
+option java_package = "com.cs446_35.wastenot";
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+message Item {
+    string name = 1;
+    Amount amount = 2;
+	google.protobuf.Timestamp date_added = 3;
+	oneof expiration {
+		google.protobuf.Timestamp exact_date = 4;
+		google.protobuf.Timestamp estimated_date = 5;
+	}
+}
+
+message GetInventoryRequest {
+	string user_id = 1;
+}
+
+message GetInventoryResponse {
+	repeated Item items = 1;
+}
+
+message AddItemRequest {
+	string user_id = 1;
+	Item item = 2;
+}
+
+message AddItemResponse {}
+
+message RemoveItemRequest {
+	string user_id = 1;
+	string item_name = 2;
+}
+
+message RemoveItemResponse {}
+
+service InventoryService {
+    rpc GetInventory(GetInventoryRequest) returns (GetInventoryResponse);
+    rpc AddItem(AddItemRequest) returns (AddItemResponse);
+    rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse);
+}
