@@ -12,4 +12,5 @@
     <string name="shopping_list_title">Shopping List</string>
     <string name="analytics_title">Analytics</string>
     <string name="account_title">Account</string>
+    <string name="add_inventory_item">Add</string>
 </resources>
