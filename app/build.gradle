@@ -4,6 +4,11 @@ plugins {
     id 'com.google.protobuf'
 }
 
+task updateProtoModule(type: Exec) {
+    workingDir "$projectDir/src/main/proto"
+    commandLine 'git','pull', 'origin', 'main'
+}
+
 apply plugin: 'com.google.protobuf'
 
 android {
@@ -42,9 +47,6 @@ android {
             java {
                 srcDirs += 'build/generated/source/proto/main/java'
             }
-            kotlin {
-                srcDirs += 'build/generated/source/proto/main/kotlin'
-            }
             proto {
                 srcDir 'src/main/proto' // default value
             }
@@ -65,7 +67,6 @@ protobuf {
         all().each { task ->
             task.builtins {
                 java { option 'lite' }
-                kotlin { option 'lite' }
             }
             task.plugins {
                 grpc { option 'lite' }

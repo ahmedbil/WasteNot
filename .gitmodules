@@ -1,0 +1,4 @@
+[submodule "app/src/main/proto"]
+	path = app/src/main/proto
+	url = https://github.com/CS446-S23-Group35/wastenot-proto
+	branch = main
