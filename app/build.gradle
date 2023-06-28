@@ -9,6 +9,8 @@ task updateProtoModule(type: Exec) {
     commandLine 'git','pull', 'origin', 'main'
 }
 
+preBuild.dependsOn updateProtoModule
+
 apply plugin: 'com.google.protobuf'
 
 android {
