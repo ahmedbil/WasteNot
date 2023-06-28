@@ -13,18 +13,19 @@
             android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 android:layout_margin="5dp"
+                android:padding="5dp"
                 android:elevation="10dp">
             <ImageView
                     android:layout_width="match_parent"
                     android:scaleType="centerCrop"
                     android:layout_height="175dp" android:background="@drawable/ic_launcher_background"
                     android:id="@+id/recipe_image"/>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <RelativeLayout
                 android:id="@+id/RelativeLayout01"
@@ -32,12 +33,11 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="32sp"
-                    android:textColor="#000000"/>
+                    android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="32sp"/>
 
             <ImageView
                     android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
                     android:id="@+id/shopping_cart"/>
 
         </RelativeLayout>
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
                 android:text="Beef brisket, lb beef shank, cooked rice noodles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/recipe_ingredients"
@@ -59,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" app:srcCompat="@drawable/timer" android:id="@+id/imageView4"
                     android:layout_weight="0"/>
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                     android:text="8 hr 25 mins"
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"

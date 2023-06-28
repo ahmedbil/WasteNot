@@ -3,6 +3,7 @@ package com.example.androidapp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.text.Normalizer
 
 
 class RecipeViewModel : ViewModel() {
@@ -34,7 +35,7 @@ class RecipeViewModel : ViewModel() {
 
     // fetch recipes whose name matches the query.
     fun queryRecipes(query: String) {
-        liveRecipes.value = recipes.filter { it.getName() == query }
+        liveRecipes.value = recipes.filter { Normalizer.normalize(it.getName().lowercase(), Normalizer.Form.NFD).contains(query) }
             .toList()
             .takeIf { query != "" }
             ?: recipes.toList()

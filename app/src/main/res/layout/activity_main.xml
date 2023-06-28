@@ -9,7 +9,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:background="#FFFFFF">
+            android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_app_bar"
@@ -18,6 +18,10 @@
             app:title="@string/recipes_title"
             app:menu="@menu/menu_main" app:titleCentered="true"
             app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+        <View android:layout_width="match_parent"
+          android:layout_height="1dp"
+          style="?android:attr/panelTextAppearance" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

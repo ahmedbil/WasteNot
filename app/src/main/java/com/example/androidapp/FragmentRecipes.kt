@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentRecipesBinding
 
@@ -71,9 +73,9 @@ class FragmentRecipes : Fragment() {
     // The information is hardcoded which will be later provided by the search engine.
     // As such the worflow must be moved to the server/interface side. And must not be kept in client side.
     fun createRecipes(recipeViewModel: RecipeViewModel) {
-        recipeViewModel.addRecipe("Lamb Biryani", listOf("plain yogurt", "skinless chicken pieces",  "basmati rice", "vegetable oil" ), "2hr 15 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2022/07/27/0/YAHI_Dum-Aloo-Biryani_s4x3.jpg.rend.hgtvcom.826.620.suffix/1658954351318.jpeg");
-        recipeViewModel.addRecipe("PHỞ BÒ", listOf("Beef brisket", "lb beef shank", "cooked rice noodles" ), "8hr 25 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/11/30/0/FNK_Instant-Pot-Beef-Pho-H_s4x3.jpg.rend.hgtvcom.826.620.suffix/1548176890147.jpeg");
-        recipeViewModel.addRecipe("Tonkotsu ramen", listOf("chicken carcass", "pork ribs",  "dried shiitake mushrooms"), "20hr 45 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/4/3/0/LS-Library_Kimchi-and-Bacon-Ramen_s4x3.jpg.rend.hgtvcom.826.620.suffix/1522778330680.jpeg");
+        recipeViewModel.addRecipe("LAMB BIRYANI", listOf("plain yogurt", "skinless chicken pieces",  "basmati rice", "vegetable oil" ), "2 hrs 15 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2022/07/27/0/YAHI_Dum-Aloo-Biryani_s4x3.jpg.rend.hgtvcom.826.620.suffix/1658954351318.jpeg");
+        recipeViewModel.addRecipe("PHỞ BÒ", listOf("Beef brisket", "lb beef shank", "cooked rice noodles" ), "8 hrs 25 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/11/30/0/FNK_Instant-Pot-Beef-Pho-H_s4x3.jpg.rend.hgtvcom.826.620.suffix/1548176890147.jpeg");
+        recipeViewModel.addRecipe("TONKOTSU RAMEN", listOf("chicken carcass", "pork ribs",  "dried shiitake mushrooms"), "20 hrs 45 mins", "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/4/3/0/LS-Library_Kimchi-and-Bacon-Ramen_s4x3.jpg.rend.hgtvcom.826.620.suffix/1522778330680.jpeg");
     }
 
     // We want to only display a number of ingredients in the recipe overview card. As such
@@ -110,24 +112,12 @@ class FragmentRecipes : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var recipeViewModel = ViewModelProvider(requireActivity())[RecipeViewModel::class.java]
+        val recipeViewModel = ViewModelProvider(requireActivity())[RecipeViewModel::class.java]
 
         // adding listener to search bar to catch events such as query submit and change.
-        binding.searchView2.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (newText == "") {
-                    recipeViewModel.queryRecipes(newText);
-                }
-                return false
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                recipeViewModel.queryRecipes(query);
-                return false
-            }
-
-        })
+        binding.recipeSearchField.editText?.addTextChangedListener {
+            recipeViewModel.queryRecipes(it.toString());
+        }
 
         super.onViewCreated(view, savedInstanceState)
     }
