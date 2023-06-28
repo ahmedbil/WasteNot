@@ -15,6 +15,4 @@ class Recipe(name : String, ingredients : List<String>, estimatedTime: String, i
     fun getIngredients() : List<String> { return ingredients }
 
     fun getImageURL() : String { return imageURL }
-
-
 }

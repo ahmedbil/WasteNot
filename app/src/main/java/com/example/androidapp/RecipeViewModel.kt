@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 
 
 class RecipeViewModel : ViewModel() {
+    // list of recipes passed by server
     private var recipes =  mutableListOf<Recipe>();
+
+    // list of recipes being displayed.
     private var liveRecipes =  MutableLiveData<List<Recipe>>()
 
     init {
@@ -17,16 +20,19 @@ class RecipeViewModel : ViewModel() {
         return liveRecipes;
     }
 
+    // create new recipe and update the current recipes being displayed.
     fun addRecipe(name : String, ingredients : List<String>, estimatedTime: String, imageURL: String) {
         val recipe = Recipe(name, ingredients, estimatedTime, imageURL);
         recipes.add(recipe);
         liveRecipes.value = recipes.toList();
     }
 
+    // remove all recipes
     fun deleteRecipes() {
         recipes =  mutableListOf<Recipe>();
     }
 
+    // fetch recipes whose name matches the query.
     fun queryRecipes(query: String) {
         liveRecipes.value = recipes.filter { it.getName() == query }
             .toList()
