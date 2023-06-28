@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
                     // update the action bar for recipes search page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
-                    print(nwManager.getRecipes())
                     true
                 }
 
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
                     // update the action bar for inventory page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
-                    print(nwManager.getInventory())
                     true
                 }
 
