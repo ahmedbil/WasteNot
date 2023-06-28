@@ -63,7 +63,7 @@
                     android:text="8 hr 25 mins"
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:id="@+id/expiry_date" android:layout_weight="1"
+                    android:layout_height="match_parent" android:id="@+id/recipe_estimated_time" android:layout_weight="1"
                     android:paddingLeft="5dp"/>
         </LinearLayout>
     </LinearLayout>

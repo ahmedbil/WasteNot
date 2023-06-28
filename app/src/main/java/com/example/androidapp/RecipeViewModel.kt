@@ -16,7 +16,6 @@ class RecipeViewModel : ViewModel() {
         return liveRecipes;
     }
 
-
     fun addRecipe(name : String, ingredients : List<String>, estimatedTime: String) {
         val recipe = Recipe(name, ingredients, estimatedTime);
         recipes.add(recipe);

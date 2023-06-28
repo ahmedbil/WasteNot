@@ -13,21 +13,29 @@
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="10dp" android:layout_marginEnd="10dp" android:layout_marginTop="20dp"
             android:id="@+id/searchView2"
-            android:background="@drawable/search_background"/>
-    <ScrollView
+            android:background="@drawable/search_background">
+    </SearchView>
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/searchView2" android:layout_marginTop="20dp">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                      android:orientation="vertical">
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" android:id="@+id/textView"
-                    android:text="@string/recipe_suggestion_text"
-                    android:fontFamily="sans-serif" android:textColor="#000000" android:textSize="24sp"
-                    android:textAlignment="center"/>
-        </LinearLayout>
-    </ScrollView>
+            tools:layout_editor_absoluteX="402dp" app:layout_constraintTop_toBottomOf="@+id/searchView2">
+        <ScrollView
+                android:id="@+id/recipeScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+            <LinearLayout android:id="@+id/recipeScrollHost" android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/textView"
+                        android:text="@string/recipe_suggestion_text"
+                        android:fontFamily="sans-serif" android:textColor="#000000" android:textSize="24sp"
+                        android:textAlignment="center"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
