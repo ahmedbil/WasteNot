@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/page_recipes"
+      android:enabled="true"
+      android:icon="@drawable/recipes_icon"
+      android:title="@string/recipes_title"/>
+  <item
+      android:id="@+id/page_inventory"
+      android:enabled="true"
+      android:icon="@drawable/inventory_icon"
+      android:title="@string/inventory_title"/>
+  <item
+      android:id="@+id/page_shopping_list"
+      android:enabled="true"
+      android:icon="@drawable/shopping_list_icon"
+      android:title="@string/shopping_list_title"/>
+  <item
+      android:id="@+id/page_analytics"
+      android:enabled="true"
+      android:icon="@drawable/analytics_icon"
+      android:title="@string/analytics_title"/>
+  <item
+      android:id="@+id/page_account"
+      android:enabled="true"
+      android:icon="@drawable/account_icon"
+      android:title="@string/account_title"/>
+</menu>
