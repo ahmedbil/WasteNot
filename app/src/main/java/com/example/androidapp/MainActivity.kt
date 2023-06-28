@@ -15,10 +15,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navbarView: BottomNavigationView
     private lateinit var fragmentContainer: ConstraintLayout
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var nwManager: NetworkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        nwManager = NetworkManager("pixa.cubetex.net:8080")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                     // update the action bar for recipes search page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
+                    print(nwManager.getRecipes())
                     true
                 }
 
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
                     // update the action bar for inventory page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
+                    print(nwManager.getInventory())
                     true
                 }
 
