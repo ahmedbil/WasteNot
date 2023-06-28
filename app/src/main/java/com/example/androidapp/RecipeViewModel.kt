@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+
 class RecipeViewModel : ViewModel() {
     private var recipes =  mutableListOf<Recipe>();
     private var liveRecipes =  MutableLiveData<List<Recipe>>()
@@ -16,9 +17,20 @@ class RecipeViewModel : ViewModel() {
         return liveRecipes;
     }
 
-    fun addRecipe(name : String, ingredients : List<String>, estimatedTime: String) {
-        val recipe = Recipe(name, ingredients, estimatedTime);
+    fun addRecipe(name : String, ingredients : List<String>, estimatedTime: String, imageURL: String) {
+        val recipe = Recipe(name, ingredients, estimatedTime, imageURL);
         recipes.add(recipe);
         liveRecipes.value = recipes.toList();
+    }
+
+    fun deleteRecipes() {
+        recipes =  mutableListOf<Recipe>();
+    }
+
+    fun queryRecipes(query: String) {
+        liveRecipes.value = recipes.filter { it.getName() == query }
+            .toList()
+            .takeIf { query != "" }
+            ?: recipes.toList()
     }
 }

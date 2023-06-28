@@ -22,7 +22,7 @@
             <ImageView
                     android:layout_width="match_parent"
                     android:scaleType="centerCrop"
-                    android:layout_height="175dp" tools:srcCompat="@drawable/biryani"
+                    android:layout_height="175dp" android:background="@drawable/ic_launcher_background"
                     android:id="@+id/recipe_image"/>
         </androidx.cardview.widget.CardView>
 
@@ -48,7 +48,7 @@
         </RelativeLayout>
         <TextView
                 android:text="Beef brisket, lb beef shank, cooked rice noodles"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/recipe_ingredients"
                 android:layout_marginLeft="10dp"/>
         <LinearLayout
@@ -57,13 +57,14 @@
                 android:layout_height="wrap_content" android:layout_margin="10dp">
             <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" app:srcCompat="@drawable/timer" android:id="@+id/imageView4"
+                    android:layout_height="match_parent" app:srcCompat="@drawable/timer" android:id="@+id/imageView4"
                     android:layout_weight="0"/>
             <TextView
                     android:text="8 hr 25 mins"
                     android:gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:id="@+id/recipe_estimated_time" android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:id="@+id/recipe_estimated_time"
+                    android:layout_weight="1"
                     android:paddingLeft="5dp"/>
         </LinearLayout>
     </LinearLayout>
