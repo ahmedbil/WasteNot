@@ -34,12 +34,16 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.page_recipes -> {
                     topAppBar.setTitle(R.string.recipes_title)
+                    // update the action bar for recipes search page
+                    updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
                     true
                 }
 
                 R.id.page_inventory -> {
                     topAppBar.setTitle(R.string.inventory_title)
+                    // update the action bar for inventory page
+                    updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
                     true
                 }
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -60,8 +65,16 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_recipe_filter -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    // Updates the action bar based on the specific fragment page
+    fun updateActionBar() {
+        val recipeFilterButton = topAppBar.menu.findItem(R.id.action_recipe_filter)
+
+        //enable filter button if it is recipe search page.
+        recipeFilterButton.isVisible = topAppBar.title == "Recipes"
     }
 }

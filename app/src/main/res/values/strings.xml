@@ -8,9 +8,12 @@
     <string name="previous">Previous</string>
 
     <string name="recipes_title">Recipes</string>
+    <string name="recipes_filter">Recipes Filter</string>
     <string name="inventory_title">Inventory</string>
     <string name="shopping_list_title">Shopping List</string>
     <string name="analytics_title">Analytics</string>
     <string name="account_title">Account</string>
     <string name="add_inventory_item">Add</string>
+    <string name="recipe_suggestion_text">Based on your inventory...</string>
+    <string name="searchbar_hint">Recipe names</string>
 </resources>

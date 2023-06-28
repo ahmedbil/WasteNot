@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".FragmentRecipes">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+        <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:elevation="10dp">
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:scaleType="centerCrop"
+                    android:layout_height="175dp" android:background="@drawable/ic_launcher_background"
+                    android:id="@+id/recipe_image"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <RelativeLayout
+                android:id="@+id/RelativeLayout01"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="32sp"/>
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/shopping_cart"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/shopping_cart"/>
+
+        </RelativeLayout>
+        <com.google.android.material.textview.MaterialTextView
+                android:text="Beef brisket, lb beef shank, cooked rice noodles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/recipe_ingredients"
+                android:layout_marginLeft="10dp"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_margin="10dp">
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" app:srcCompat="@drawable/timer" android:id="@+id/imageView4"
+                    android:layout_weight="0"/>
+            <com.google.android.material.textview.MaterialTextView
+                    android:text="8 hr 25 mins"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:id="@+id/recipe_estimated_time"
+                    android:layout_weight="1"
+                    android:paddingLeft="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
