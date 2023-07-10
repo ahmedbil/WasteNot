@@ -15,9 +15,9 @@ class NetworkManager constructor(addr: String){
     private val inventorySvc = InventoryServiceGrpc.newBlockingStub(channel);
     private val recipeSvc = RecipeServiceGrpc.newBlockingStub(channel);
 
-    fun getRecipes(): List<Recipe> {
+    fun getRecipes(queryName: String): List<Recipe> {
         val resp = recipeSvc.searchRecipesByName(
-            SearchRecipesByNameRequest.newBuilder().setQuery("name").build()
+            SearchRecipesByNameRequest.newBuilder().setQuery(queryName).build()
         )
         return resp.recipesList
     }
