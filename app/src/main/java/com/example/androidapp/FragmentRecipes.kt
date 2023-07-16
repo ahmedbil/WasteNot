@@ -1,19 +1,23 @@
 package com.example.androidapp
 
+// To get images from url to setup in image view.
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentRecipesBinding
-
-// To get images from url to setup in image view.
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 
+import java.io.IOException
 
 
 /**
@@ -65,6 +69,28 @@ class FragmentRecipes : Fragment() {
             }
         }
 
+        var image : Bitmap? = null
+
+
+        //https://ocr.space/Content/Images/receipt-ocr-original.jpg
+        Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(object : Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                // Image loaded successfully, notify the callback
+                image = bitmap
+                val scanner = ReceiptScanner();
+                //val image = Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(imageview)
+                Log.i("image-receipt", image.toString())
+                scanner.parseReceiptImage(image);
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                // Failed to load image, notify the callback
+            }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                // Image is being prepared, do nothing
+            }
+        })
         return binding.root
     }
 
