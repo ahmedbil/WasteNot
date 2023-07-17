@@ -73,7 +73,7 @@ class FragmentRecipes : Fragment() {
 
 
         //https://ocr.space/Content/Images/receipt-ocr-original.jpg
-        Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(object : Target {
+        Picasso.get().load("https://i.postimg.cc/ZY9BV2WT/Screenshot-2023-07-17-at-12-16-38-AM.png").into(object : Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 // Image loaded successfully, notify the callback
                 image = bitmap

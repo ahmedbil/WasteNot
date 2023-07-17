@@ -8,6 +8,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -40,7 +41,7 @@ class ReceiptScanner {
 
         //receiptLinesSorted.forEach{ Log.i(it.text,"x: ${it.boundingBox?.exactCenterX()}, y: ${it.boundingBox?.exactCenterY()}") }
 
-        val receiptLinesSorted = findTopLine(receiptLines, 10.0)
+        val receiptLinesSorted = findTopLine(receiptLines, 10.0, width)
 
         receiptLinesSorted.forEach {
             var text = ""
@@ -90,7 +91,7 @@ class ReceiptScanner {
     fun sum(point : Point?) : Double {
         var value = 0.0
         if (point != null) {
-            value = (point.x + point.y).toDouble();
+            value = (point.x + point.y * (3)).toDouble();
             return value
         }
         return value
@@ -121,7 +122,7 @@ class ReceiptScanner {
         return sqrt(sum)
     }
 
-    fun findTopLine(points: List<Text.Element>, radius: Double): List<List<Text.Element>> {
+    fun findTopLine(points: List<Text.Element>, radius: Double, width : Int): List<List<Text.Element>> {
         val topLinePoints = mutableListOf<List<Text.Element>>()
         var remainingPoints = points.toMutableList()
 
@@ -152,7 +153,7 @@ class ReceiptScanner {
                         val pX = point.cornerPoints?.get(0)!!.x.toDouble()
                         val pY = point.cornerPoints?.get(0)!!.y.toDouble()
                         val p = doubleArrayOf(pX, pY)
-                        val distance = pDistance(pX, pY, topLeftX, topLeftY, topRightX, topLeftY)
+                        val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY)
                         if (distance <= radius) {
                             pointList.add(point)
                         } else {
