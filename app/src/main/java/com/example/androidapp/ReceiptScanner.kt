@@ -38,7 +38,7 @@ class ReceiptScanner {
 
         //receiptLinesSorted.forEach{ Log.i(it.text,"x: ${it.boundingBox?.exactCenterX()}, y: ${it.boundingBox?.exactCenterY()}") }
 
-        val receiptLinesSorted = findTopLine(receiptLines, 0.0)
+        val receiptLinesSorted = findTopLine(receiptLines, 10.0)
 
         receiptLinesSorted.forEach {
             var text = ""
@@ -141,7 +141,7 @@ class ReceiptScanner {
                     val topRightY = topRight.cornerPoints?.get(0)!!.y.toDouble()
 
                     val a = doubleArrayOf(topLeftX, topLeftY)
-                    val b = doubleArrayOf(topRightX, topRightY)
+                    val b = doubleArrayOf(topRightX, topLeftY)
 
                     // Check if other points are in the top line formed by a and b
                     val remainingPointsToSearch = mutableListOf<Text.Element>()
@@ -149,16 +149,14 @@ class ReceiptScanner {
                         val pX = point.cornerPoints?.get(0)!!.x.toDouble()
                         val pY = point.cornerPoints?.get(0)!!.y.toDouble()
                         val p = doubleArrayOf(pX, pY)
-                        val distance = pDistance(pX, pY, topLeftX, topLeftY, topRightX, topRightY)
-                        Log.i("point", point.cornerPoints?.get(0).toString())
-                        Log.i("distance", distance.toString())
+                        val distance = pDistance(pX, pY, topLeftX, topLeftY, topRightX, topLeftY)
                         if (distance <= radius) {
                             pointList.add(point)
                         } else {
                             remainingPointsToSearch.add(point)
                         }
                     }
-                    pointList.sortedBy { it.boundingBox?.exactCenterX() }
+                    pointList.sortedBy { it.cornerPoints?.get(0)!!.x }
                     topLinePoints.add(pointList)
                     remainingPoints = remainingPointsToSearch
                 }
