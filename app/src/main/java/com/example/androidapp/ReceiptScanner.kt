@@ -20,7 +20,7 @@ class ReceiptScanner {
         return image?.let {
             textRecognizer.process(it)
                 .addOnSuccessListener { text ->
-                    parseText(text)
+                    parseText(text, it.width)
                 }
                 .addOnFailureListener { e ->
                     Log.e("ReceiptParser", "Error parsing receipt image: ${e.message}", e)
@@ -28,8 +28,10 @@ class ReceiptScanner {
         }
     }
 
-    private fun parseText(text: Text) {
+    private fun parseText(text: Text, width: Int) {
         //var stopParsing = false;
+
+        //Log.i("width", width.toString())
 
         val blocks = text.textBlocks
 
@@ -59,13 +61,14 @@ class ReceiptScanner {
                 val lineConfidence = line.confidence
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
+                Log.i("line",lineText)
 
                 for (element in line.elements) {
                     val elementText = element.text
                     //val elementConfidence = element.confidence
                     val elementCornerPoints = element.cornerPoints
                     val elementFrame = element.boundingBox
-                    Log.i("line", element.)
+                    //Log.i("line", element.)
                 }
             }
         }*/
@@ -124,7 +127,7 @@ class ReceiptScanner {
 
         while (remainingPoints.isNotEmpty()) {
             // Find top left point
-            val pointList = mutableListOf<Text.Element>()
+            var pointList = mutableListOf<Text.Element>()
             val topLeftPoint = remainingPoints.minByOrNull {  sum(it.cornerPoints?.get(0)) }
             topLeftPoint?.let {topLeft ->
                 // Find top right point
@@ -132,8 +135,8 @@ class ReceiptScanner {
                 topRightPoint?.let { topRight ->
                     //topLinePoints.add(it)
 
-                    Log.i("topleft", topLeft.cornerPoints?.get(0).toString())
-                    Log.i("topRight", topRight.cornerPoints?.get(0).toString())
+                    //Log.i("topleft", topLeft.cornerPoints?.get(0).toString())
+                    //Log.i("topRight", topRight.cornerPoints?.get(0).toString())
 
                     val topLeftX = topLeft.cornerPoints?.get(0)!!.x.toDouble()
                     val topLeftY = topLeft.cornerPoints?.get(0)!!.y.toDouble()
@@ -156,7 +159,13 @@ class ReceiptScanner {
                             remainingPointsToSearch.add(point)
                         }
                     }
-                    pointList.sortedBy { it.cornerPoints?.get(0)!!.x }
+                    pointList = pointList.sortedWith(compareBy { it.cornerPoints?.get(0)!!.x }).toMutableList()
+
+                    var text = "";
+                    for (element in pointList) {
+                        text += element.cornerPoints?.get(0)!!.x.toString() + " "
+                    }
+                    //Log.i("list", text)
                     topLinePoints.add(pointList)
                     remainingPoints = remainingPointsToSearch
                 }
