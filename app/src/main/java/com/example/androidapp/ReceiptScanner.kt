@@ -39,7 +39,7 @@ class ReceiptScanner {
 
         //receiptLinesSorted.forEach{ Log.i(it.text,"x: ${it.boundingBox?.exactCenterX()}, y: ${it.boundingBox?.exactCenterY()}") }
 
-        val receiptLinesSorted = findTopLine(receiptLines, 5.0, width)
+        val receiptLinesSorted = findTopLine(receiptLines, 10.0, width)
 
         receiptLinesSorted.forEach {
             var text = ""
@@ -180,7 +180,7 @@ class ReceiptScanner {
                                 //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
                                 //trX = right.cornerPoints?.get(0)!!.x.toDouble()
                                 //trY = right.cornerPoints?.get(0)!!.y.toDouble()
-                                interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
+                                interpolant = linear_interpolate(pointList[pointList.size - 2], pointList[pointList.size - 1], width)
                                 Log.i("interpolate", interpolant.toString())
                                 //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
                             }
