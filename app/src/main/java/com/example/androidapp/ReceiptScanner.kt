@@ -144,11 +144,13 @@ class ReceiptScanner {
                     val topRightX = topRight.cornerPoints?.get(0)!!.x.toDouble()
                     val topRightY = topRight.cornerPoints?.get(0)!!.y.toDouble()
 
-                    var trX = topLeft.cornerPoints?.get(1)!!.x.toDouble()
+                    var trX = topLeft.cornerPoints?.get(1)!!.x
 
-                    var trY = topLeft.cornerPoints?.get(1)!!.y.toDouble()
+                    var trY = topLeft.cornerPoints?.get(1)!!.y
 
                     var interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
+
+                    //var interpolant = linear_interpolate(topLeft, Point(trX, trY), width)
 
                     //interpolant = topLeftY
                     Log.i("interpolate", interpolant.toString())
@@ -159,6 +161,8 @@ class ReceiptScanner {
                     pointList.add(topLeft)
                     remainingPoints.remove(topLeft)
 
+                    var thresh = radius;
+
                     // Check if other points are in the top line formed by a and b
                     val remainingPointsToSearch = mutableListOf<Text.Element>()
                     for (point in remainingPoints) {
@@ -166,12 +170,17 @@ class ReceiptScanner {
                         val pY = point.cornerPoints?.get(0)!!.y.toDouble()
                         val p = doubleArrayOf(pX, pY)
                         val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), interpolant)
-                        if (point.text == "23.99") {
+                        if (point.text == "9.10") {
+                            Log.i("interpolate distance", distance.toString())
+                            Log.i("non-distance", pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY).toString())
                             Log.i("point", point.text)
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
                             //pointList.add(point)
                         }
-                        if (distance <= radius) {
+                        if (distance.toInt() <= thresh) {
+                            thresh /= 1.2
+                            Log.i("interpolate distance", distance.toString())
+                            Log.i("non-distance", pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY).toString())
                             Log.i("point", point.text)
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
                             pointList.add(point)
@@ -185,8 +194,9 @@ class ReceiptScanner {
                                 //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
                                 //trX = right.cornerPoints?.get(0)!!.x.toDouble()
                                 //trY = right.cornerPoints?.get(0)!!.y.toDouble()
-                                //interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
-                                interpolant = linear_interpolate(pointList[pointList.size-2], pointList[pointList.size-1], width)
+                                //interpolant = linear_interpolate(pointList[pointList.size - 2], pointList[pointList.size - 1], width)
+                                interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
+                                //interpolant = linear_interpolate(pointList[0], getAveragePoint(pointList), width)
                                 Log.i("interpolate", interpolant.toString())
                                 //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
                             }
@@ -207,10 +217,13 @@ class ReceiptScanner {
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
                             //pointList.add(point)
                         }
-                        if (distance <= radius) {
+                        if (distance <= thresh) {
+                            Log.i("interpolate distance", distance.toString())
+                            Log.i("non-distance", pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY).toString())
                             Log.i("point", point.text)
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
                             pointList.add(point)
+                            thresh /= 1.2
                             if (pointList.size >= 2) {
                                 pointList = pointList.sortedWith(compareBy { it.cornerPoints?.get(0)!!.x }).toMutableList()
                                 //val left = pointList[pointList.size - 2]
@@ -221,8 +234,9 @@ class ReceiptScanner {
                                 //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
                                 //trX = right.cornerPoints?.get(0)!!.x.toDouble()
                                 //trY = right.cornerPoints?.get(0)!!.y.toDouble()
-                                //interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
-                                interpolant = linear_interpolate(pointList[0], getAveragePoint(pointList), width)
+                                //interpolant = linear_interpolate(pointList[pointList.size - 2], pointList[pointList.size - 1], width)
+                                interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
+                                //interpolant = linear_interpolate(pointList[0], getAveragePoint(pointList), width)
                                 Log.i("interpolate", interpolant.toString())
                                 //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
                             }
