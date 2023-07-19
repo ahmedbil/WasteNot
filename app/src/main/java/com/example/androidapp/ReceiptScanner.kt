@@ -165,7 +165,7 @@ class ReceiptScanner {
                         val pX = point.cornerPoints?.get(0)!!.x.toDouble()
                         val pY = point.cornerPoints?.get(0)!!.y.toDouble()
                         val p = doubleArrayOf(pX, pY)
-                        val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY)
+                        val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), interpolant)
                         if (distance <= radius) {
                             Log.i("point", point.text)
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
@@ -180,7 +180,7 @@ class ReceiptScanner {
                                 //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
                                 //trX = right.cornerPoints?.get(0)!!.x.toDouble()
                                 //trY = right.cornerPoints?.get(0)!!.y.toDouble()
-                                interpolant = interpolate(pointList, width, pointList.size)
+                                interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
                                 Log.i("interpolate", interpolant.toString())
                                 //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
                             }
@@ -255,6 +255,17 @@ class ReceiptScanner {
             result += term
         }
         return result
+    }
+
+    fun linear_interpolate(a : Text.Element, b : Text.Element, xi : Int) : Double {
+
+        val x1 = a.cornerPoints?.get(0)!!.x.toDouble()
+        val y1 = a.cornerPoints?.get(0)!!.y.toDouble()
+        val x2 = b.cornerPoints?.get(0)!!.x.toDouble()
+        val y2 = b.cornerPoints?.get(0)!!.y.toDouble()
+
+        return y1 + (((xi-x1) * (y2-y1)) / (x2-x1))
+
     }
 
 
