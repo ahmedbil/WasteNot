@@ -1,14 +1,12 @@
 package com.example.androidapp
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.graphics.Rect
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -41,7 +39,7 @@ class ReceiptScanner {
 
         //receiptLinesSorted.forEach{ Log.i(it.text,"x: ${it.boundingBox?.exactCenterX()}, y: ${it.boundingBox?.exactCenterY()}") }
 
-        val receiptLinesSorted = findTopLine(receiptLines, 10.0, width)
+        val receiptLinesSorted = findTopLine(receiptLines, 5.0, width)
 
         receiptLinesSorted.forEach {
             var text = ""
@@ -62,14 +60,15 @@ class ReceiptScanner {
                 val lineConfidence = line.confidence
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
-                Log.i("line",lineText)
+                //Log.i("line",lineText)
 
                 for (element in line.elements) {
                     val elementText = element.text
                     //val elementConfidence = element.confidence
                     val elementCornerPoints = element.cornerPoints
                     val elementFrame = element.boundingBox
-                    //Log.i("line", element.)
+                    //Log.i("line", element.angle.toString())
+
                 }
             }
         }*/
@@ -123,6 +122,7 @@ class ReceiptScanner {
     }
 
     fun findTopLine(points: List<Text.Element>, radius: Double, width : Int): List<List<Text.Element>> {
+        Log.i("width", width.toString())
         val topLinePoints = mutableListOf<List<Text.Element>>()
         var remainingPoints = points.toMutableList()
 
@@ -136,16 +136,28 @@ class ReceiptScanner {
                 topRightPoint?.let { topRight ->
                     //topLinePoints.add(it)
 
-                    //Log.i("topleft", topLeft.cornerPoints?.get(0).toString())
-                    //Log.i("topRight", topRight.cornerPoints?.get(0).toString())
+                    Log.i("topleft", topLeft.text)
+                    Log.i("topLeft Point", "(${topLeft.cornerPoints?.get(0)!!.x.toString()}, ${topLeft.cornerPoints?.get(0)!!.y.toString()})")
 
-                    val topLeftX = topLeft.cornerPoints?.get(0)!!.x.toDouble()
-                    val topLeftY = topLeft.cornerPoints?.get(0)!!.y.toDouble()
+                    var topLeftX = topLeft.cornerPoints?.get(0)!!.x.toDouble()
+                    var topLeftY = topLeft.cornerPoints?.get(0)!!.y.toDouble()
                     val topRightX = topRight.cornerPoints?.get(0)!!.x.toDouble()
                     val topRightY = topRight.cornerPoints?.get(0)!!.y.toDouble()
 
+                    var trX = topLeft.cornerPoints?.get(1)!!.x.toDouble()
+
+                    var trY = topLeft.cornerPoints?.get(1)!!.y.toDouble()
+
+                    var interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
+
+                    //interpolant = topLeftY
+                    Log.i("interpolate", interpolant.toString())
+
                     val a = doubleArrayOf(topLeftX, topLeftY)
                     val b = doubleArrayOf(topRightX, topLeftY)
+
+                    pointList.add(topLeft)
+                    remainingPoints.remove(topLeft)
 
                     // Check if other points are in the top line formed by a and b
                     val remainingPointsToSearch = mutableListOf<Text.Element>()
@@ -155,7 +167,23 @@ class ReceiptScanner {
                         val p = doubleArrayOf(pX, pY)
                         val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), topLeftY)
                         if (distance <= radius) {
+                            Log.i("point", point.text)
+                            Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
                             pointList.add(point)
+                            if (pointList.size >= 2) {
+                                pointList = pointList.sortedWith(compareBy { it.cornerPoints?.get(0)!!.x }).toMutableList()
+                                //val left = pointList[pointList.size - 2]
+                                //val right = pointList[pointList.size - 1]
+                                //Log.i("left", left.text)
+                                //Log.i("right", right.text)
+                                //topLeftX = left.cornerPoints?.get(0)!!.x.toDouble()
+                                //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
+                                //trX = right.cornerPoints?.get(0)!!.x.toDouble()
+                                //trY = right.cornerPoints?.get(0)!!.y.toDouble()
+                                interpolant = interpolate(pointList, width, pointList.size)
+                                Log.i("interpolate", interpolant.toString())
+                                //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
+                            }
                         } else {
                             remainingPointsToSearch.add(point)
                         }
@@ -209,6 +237,24 @@ class ReceiptScanner {
         var dx = x - xx;
         var dy = y - yy;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+
+    fun interpolate(f: List<Text.Element>, xi: Int, n: Int): Double {
+        var result = 0.0 // Initialize result
+        for (i in 0 until n) {
+            // Compute individual terms of above formula
+            var term: Double = f[i].cornerPoints?.get(0)!!.y.toDouble()
+            for (j in 0 until n) {
+                val fjx = f[j].cornerPoints?.get(0)!!.x.toDouble()
+                val fix = f[i].cornerPoints?.get(0)!!.x.toDouble()
+                if (j != i) term *= ((xi - fjx) / (fix - fjx))
+            }
+
+            // Add current term to result
+            result += term
+        }
+        return result
     }
 
 
