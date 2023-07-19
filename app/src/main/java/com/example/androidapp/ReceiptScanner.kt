@@ -166,6 +166,11 @@ class ReceiptScanner {
                         val pY = point.cornerPoints?.get(0)!!.y.toDouble()
                         val p = doubleArrayOf(pX, pY)
                         val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), interpolant)
+                        if (point.text == "23.99") {
+                            Log.i("point", point.text)
+                            Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
+                            //pointList.add(point)
+                        }
                         if (distance <= radius) {
                             Log.i("point", point.text)
                             Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
@@ -180,7 +185,8 @@ class ReceiptScanner {
                                 //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
                                 //trX = right.cornerPoints?.get(0)!!.x.toDouble()
                                 //trY = right.cornerPoints?.get(0)!!.y.toDouble()
-                                interpolant = linear_interpolate(pointList[pointList.size - 2], pointList[pointList.size - 1], width)
+                                //interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
+                                interpolant = linear_interpolate(pointList[pointList.size-2], pointList[pointList.size-1], width)
                                 Log.i("interpolate", interpolant.toString())
                                 //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
                             }
@@ -188,6 +194,43 @@ class ReceiptScanner {
                             remainingPointsToSearch.add(point)
                         }
                     }
+
+                    val remainingPointsToSearch2 = mutableListOf<Text.Element>()
+
+                    for (point in remainingPointsToSearch) {
+                        val pX = point.cornerPoints?.get(0)!!.x.toDouble()
+                        val pY = point.cornerPoints?.get(0)!!.y.toDouble()
+                        val p = doubleArrayOf(pX, pY)
+                        val distance = pDistance(pX, pY, topLeftX, topLeftY, width.toDouble(), interpolant)
+                        if (point.text == "23.99") {
+                            Log.i("point", point.text)
+                            Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
+                            //pointList.add(point)
+                        }
+                        if (distance <= radius) {
+                            Log.i("point", point.text)
+                            Log.i("point Point", "(${point.cornerPoints?.get(0)!!.x.toString()}, ${point.cornerPoints?.get(0)!!.y.toString()})")
+                            pointList.add(point)
+                            if (pointList.size >= 2) {
+                                pointList = pointList.sortedWith(compareBy { it.cornerPoints?.get(0)!!.x }).toMutableList()
+                                //val left = pointList[pointList.size - 2]
+                                //val right = pointList[pointList.size - 1]
+                                //Log.i("left", left.text)
+                                //Log.i("right", right.text)
+                                //topLeftX = left.cornerPoints?.get(0)!!.x.toDouble()
+                                //topLeftY = left.cornerPoints?.get(0)!!.y.toDouble()
+                                //trX = right.cornerPoints?.get(0)!!.x.toDouble()
+                                //trY = right.cornerPoints?.get(0)!!.y.toDouble()
+                                //interpolant = linear_interpolate(pointList[0], pointList[pointList.size - 1], width)
+                                interpolant = linear_interpolate(pointList[0], getAveragePoint(pointList), width)
+                                Log.i("interpolate", interpolant.toString())
+                                //interpolant = (((width - trX) / (topLeftX - trX)) * (topLeftY)) + (((width - topLeftX) / (trX - topLeftX)) * (trY))
+                            }
+                        } else {
+                            remainingPointsToSearch2.add(point)
+                        }
+                    }
+
                     pointList = pointList.sortedWith(compareBy { it.cornerPoints?.get(0)!!.x }).toMutableList()
 
                     var text = "";
@@ -196,7 +239,7 @@ class ReceiptScanner {
                     }
                     //Log.i("list", text)
                     topLinePoints.add(pointList)
-                    remainingPoints = remainingPointsToSearch
+                    remainingPoints = remainingPointsToSearch2
                 }
             }
         }
@@ -266,6 +309,33 @@ class ReceiptScanner {
 
         return y1 + (((xi-x1) * (y2-y1)) / (x2-x1))
 
+    }
+
+    fun linear_interpolate(a : Text.Element, b : Point, xi : Int) : Double {
+
+        val x1 = a.cornerPoints?.get(0)!!.x.toDouble()
+        val y1 = a.cornerPoints?.get(0)!!.y.toDouble()
+        val x2 = b.x.toDouble()
+        val y2 = b.y.toDouble()
+
+        return y1 + (((xi-x1) * (y2-y1)) / (x2-x1))
+
+    }
+
+    fun getAveragePoint(f: List<Text.Element>) : Point {
+        val len = f.size
+        var x = 0.0;
+        var y = 0.0;
+
+        f.forEach { text ->
+            x += text.cornerPoints?.get(0)!!.x.toDouble()
+            y += text.cornerPoints?.get(0)!!.y.toDouble()
+        }
+
+        x /= len;
+        y /= len;
+
+        return Point(x.toInt(), y.toInt())
     }
 
 
