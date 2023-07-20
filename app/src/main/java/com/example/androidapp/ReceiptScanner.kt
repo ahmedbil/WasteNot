@@ -148,7 +148,7 @@ class ReceiptScanner {
                 remainingPointsToGroup = extractReceiptBlock(remainingPointsToGroup, block, width.toDouble(), topLeftText, threshold, 1, false)
 
                 if (block.size >= 2) {
-                    remainingPointsToGroup = extractReceiptBlock(remainingPointsToGroup, block, width.toDouble(), topLeftText, threshold, 1, true)
+                    remainingPointsToGroup = extractReceiptBlock(remainingPointsToGroup, block, width.toDouble(), topLeftText, threshold, 2, true)
                 }
 
                 block.sortWith(compareBy { it.cornerPoints?.get(0)!!.x })
@@ -211,41 +211,6 @@ class ReceiptScanner {
 
         return Math.abs(diff) / Math.sqrt(squareSum)
     }
-
-
-    /*fun pDistance(x : Double, y : Double, x1 : Double, y1 : Double, x2 : Double, y2 : Double) : Double {
-
-        var A = x - x1;
-        var B = y - y1;
-        var C = x2 - x1;
-        var D = y2 - y1;
-
-        var dot = A * C + B * D;
-        var len_sq = C * C + D * D;
-        var param = -1.0;
-        if (len_sq != 0.0) //in case of 0 length line
-            param = dot / len_sq;
-
-        var xx = 0.0
-        var yy = 0.0
-
-        if (param < 0) {
-            xx = x1
-            yy = y1
-        }
-        else if (param > 1) {
-            xx = x2
-            yy = y2
-        }
-        else {
-            xx = (x1 + param * C)
-            yy = (y1 + param * D)
-        }
-
-        var dx = x - xx;
-        var dy = y - yy;
-        return Math.sqrt(dx * dx + dy * dy);
-    }*/
 
     fun lagrange_interpolate(f: List<Point>, xi: Double, n: Int): Double {
         var result = 0.0 // Initialize result
@@ -330,11 +295,11 @@ class ReceiptScanner {
     }
 
 
-    /*fun printReceiptBlocks(blocks : List<Text.TextBlock>) {
+    fun printOriginalReceiptBlocks(blocks : List<Text.TextBlock>) {
         blocks.forEach {
             Log.i("block", it.text)
         }
-    }*/
+    }
 
     fun printReceiptBlocks(blocks : List<List<Text.Element>>) {
         blocks.forEach {
