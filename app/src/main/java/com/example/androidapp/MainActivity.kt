@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     topAppBar.setTitle(R.string.inventory_title)
                     // update the action bar for inventory page
                     updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
                     true
                 }
 

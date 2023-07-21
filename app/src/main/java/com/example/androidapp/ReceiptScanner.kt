@@ -2,6 +2,8 @@ package com.example.androidapp
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.util.Log
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageProxy
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -17,6 +19,20 @@ class ReceiptScanner {
 
     fun parseReceiptImage(imageBitmap: Bitmap?): Task<Text>? {
         val image = imageBitmap?.let { InputImage.fromBitmap(it, 0) }
+        return image?.let {
+            textRecognizer.process(it)
+                .addOnSuccessListener { text ->
+                    parseText(text, it.width)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ReceiptParser", "Error parsing receipt image: ${e.message}", e)
+                }
+        }
+    }
+
+    //@ExperimentalGetImage
+    fun parseReceiptMediaImage(imageProxy: ImageProxy?): Task<Text>? {
+        val image = imageProxy?.let { InputImage.fromMediaImage(it.image!!, imageProxy.imageInfo.rotationDegrees) }
         return image?.let {
             textRecognizer.process(it)
                 .addOnSuccessListener { text ->
