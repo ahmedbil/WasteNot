@@ -1,32 +1,50 @@
 package com.example.androidapp
 
-import io.grpc.Grpc
-import io.grpc.InsecureChannelCredentials
-import org.cs446_35.wastenot.InventoryServiceGrpc
-import org.cs446_35.wastenot.InventoryServiceOuterClass.GetInventoryRequest
-import org.cs446_35.wastenot.InventoryServiceOuterClass.Item
-import org.cs446_35.wastenot.RecipeModel
-import org.cs446_35.wastenot.RecipeServiceGrpc
-import org.cs446_35.wastenot.RecipeModel.Recipe
-import org.cs446_35.wastenot.RecipeServiceOuterClass.SearchRecipesByNameRequest
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 
+class NetworkManager private constructor(val addr: String){
+    val client = OkHttpClient()
 
-class NetworkManager constructor(addr: String){
-    private val channel = Grpc.newChannelBuilder(addr, InsecureChannelCredentials.create()).build()
-    private val inventorySvc = InventoryServiceGrpc.newBlockingStub(channel);
-    private val recipeSvc = RecipeServiceGrpc.newBlockingStub(channel);
-
-    fun getRecipes(queryName: String): List<RecipeModel.Recipe> {
-        val resp = recipeSvc.searchRecipesByName(
-            SearchRecipesByNameRequest.newBuilder().setQuery(queryName).build()
-        )
-        return resp.recipesList
+    private fun get(path: String, callback: Callback): Call {
+        val request: Request = Request.Builder()
+            .url("$addr/$path")
+            .build()
+        val call = client.newCall(request)
+        call.enqueue(callback)
+        return call
     }
 
-    fun getInventory(): List<Item> {
-        val resp = inventorySvc.getInventory(
-            GetInventoryRequest.newBuilder().setUserId("name").build()
-        )
-        return resp.itemsList
+    fun getHeartbeat() = {
+        get("heartbeat", heartBeatCallback)
+    }
+
+    private var heartBeatCallback = object: Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            println("Error doing the Request: ${e.message}")
+        }
+
+        @Throws(IOException::class)
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                val responseStr = response.body.string()
+                println("Here is the response: $responseStr")
+            } else {
+                println("Error: ${response.code}")
+            }
+        }
+    }
+
+    companion object {
+        private const val domain = "api.aws.melnyk.dev"
+        private val instance: NetworkManager = NetworkManager("https://$domain")
+
+        fun getInstance(): NetworkManager {
+            return instance
+        }
     }
 }

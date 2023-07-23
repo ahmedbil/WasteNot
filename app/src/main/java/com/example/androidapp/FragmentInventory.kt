@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.databinding.FragmentInventoryBinding
 
 private var _binding: FragmentInventoryBinding? = null
-val ingredient_list = mutableListOf<String>("Beef", "Rice noodles", "Cilantro")
+val ingredient_list = mutableListOf<String>("Beef", "Rice noodles", "Quinoa", "Carrot")
 
 // This property is only valid between onCreateView and
 // onDestroyView.
