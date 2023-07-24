@@ -28,4 +28,7 @@
     <string name="capture_image">Capture</string>
     <string name="success_toast">Receipt has successfully been parsed</string>
     <string name="warning_toast">Receipt not successfully parsed</string>
+    <string name="select">Select</string>
+    <string name="add_to_inventory">Add to Inventory</string>
+    <string name="delete">Delete</string>
 </resources>
