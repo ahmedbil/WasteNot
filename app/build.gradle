@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.amplifyframework:aws-auth-cognito:2.8.7'
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
     implementation 'io.grpc:grpc-okhttp:1.47.0'
     implementation 'io.grpc:grpc-protobuf-lite:1.47.0'
     implementation 'io.grpc:grpc-stub:1.47.0'

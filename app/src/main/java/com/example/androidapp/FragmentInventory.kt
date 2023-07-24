@@ -27,7 +27,13 @@ class Adapter(private val ingredient_list: MutableList<String>) : RecyclerView.A
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // Inflate the layout for each item and return a new ViewHolder object
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
-        return MyViewHolder(itemView)
+        val viewHolder = MyViewHolder(itemView)
+        viewHolder.ingredient.setOnLongClickListener {
+            toggleCheckBoxVisiblity()
+            binding.delete.visibility = if (binding.delete.isVisible) View.GONE else View.VISIBLE
+            return@setOnLongClickListener true
+        }
+        return viewHolder
     }
 
     // This method returns the total
@@ -72,6 +78,9 @@ class Adapter(private val ingredient_list: MutableList<String>) : RecyclerView.A
         val checkBox: CheckBox = itemView.findViewById(R.id.checkbox)
 
         init {
+            ingredient.setOnClickListener {
+                checkBox.isChecked = !checkBox.isChecked
+            }
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -127,15 +136,11 @@ class FragmentInventory : Fragment() {
             }
         }
 
-        binding.select.setOnClickListener {
-            var nextState = if (binding.delete.isVisible) View.GONE else View.VISIBLE
-            binding.delete.visibility = nextState
-            itemAdapter.toggleCheckBoxVisiblity()
-        }
-
-        binding.delete.setOnClickListener{
+        binding.delete.setOnClickListener {
             val selectedItems = itemAdapter.getSelectedItems()
             itemAdapter.deleteItems(selectedItems)
+            itemAdapter.toggleCheckBoxVisiblity()
+            binding.delete.visibility = View.GONE
         }
     }
 
