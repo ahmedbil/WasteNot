@@ -11,6 +11,7 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.*
+import kotlin.math.pow
 
 class ReceiptScanner {
 
@@ -51,14 +52,93 @@ class ReceiptScanner {
 
         val receiptLines = getSortedReceiptLineList(blocks)
 
-        val receiptLinesSorted = extractReceiptBlocks(receiptLines, 10.0, width)
+        val receiptLinesSorted = extractReceiptBlocks(receiptLines, 8.0, width)
 
         val cleanReceiptLinesSorted = cleanedReceiptLines(receiptLinesSorted)
 
+        getProductNameAndQuantity(cleanReceiptLinesSorted)
+
+        Log.i("size", cleanReceiptLinesSorted.size.toString())
+
         printReceiptBlocks(cleanReceiptLinesSorted)
+
+        val products = getProductNameAndQuantity(cleanReceiptLinesSorted)
+
+        products.forEach {
+            Log.i("product", "name: ${it.first}, unit: ${it.second.second}, amount: ${it.second.first}")
+        }
 
         Log.i("accuracy increase", ((diff / total) * 100).toString())
 
+    }
+
+    fun getProductNameAndQuantity(receipt : List<List<Text.Element>>) : List<Pair<String, Pair<Double, String>>> {
+
+        var product = mutableListOf<Pair<String, Pair<Double, String>>>()
+
+        receipt.forEach { block ->
+            var line = ""
+            block.forEach {
+                line += it.text + " "
+            }
+
+            val name = getProductName(line)
+            val quant = getProductQuantity(line)
+
+            if (name.isNotEmpty()) {
+                product.add(Pair(name, quant))
+            }
+        }
+
+        return product
+    }
+
+    fun getProductName(text : String) : String {
+        var name = ""
+        val pattern = Regex("\\b[a-zA-Z]+\\b")
+        var match = pattern.findAll(text).map { it.value }.toList()
+
+        name = ""
+
+        match.forEach {
+            name += it + " "
+        }
+
+        name.dropLast(1)
+
+        return name
+    }
+
+    fun getProductQuantity(text : String) : Pair<Double, String> {
+        var numericQuantity = 1.0
+
+        val pattern = "(\\d+(?:\\.\\d+)?)(\\s*?)((?:grams|CT|dozens|gm|kg|kilogram|kilo gram| packs| kgram|packets|pair| ounce|spoon|piece))".toRegex()
+        val pattern2 = "^\\d+\\s*".toRegex()
+
+        val getUnit = Regex("[\\s\\p{P}\\d]")
+        val getQuantity = Regex("[\\s\\p{L}]")
+
+        var match = pattern.find(text)?.value
+
+        if (match.isNullOrEmpty()) {
+            match = pattern2.find(text)?.value
+        }
+
+        var unit = match
+        unit = unit?.replace(getUnit, "")
+
+        var quantity = match
+        quantity = quantity?.replace(getQuantity, "")
+
+        if (unit.isNullOrEmpty()) {
+            unit = "unit"
+        }
+
+        if (!quantity.isNullOrEmpty()) {
+            numericQuantity = quantity.toDouble()
+        }
+
+        return Pair(numericQuantity, unit)
     }
 
     fun satisfiesRule(word : String) : Boolean {
@@ -98,11 +178,12 @@ class ReceiptScanner {
         val lettersCount = alphaNumericWord.count { it.isLetter() }
         val numbersCount = alphaNumericWord.count { it.isDigit() }
         var ratio = 0.0
+
         if (lettersCount > 0) {
             ratio = (numbersCount / lettersCount).toDouble()
         }
 
-        if (ratio > 0.5) {
+        if (ratio > 1) {
             isSatisfied = false;
         }
 
@@ -110,26 +191,36 @@ class ReceiptScanner {
     }
 
     fun removeReceiptMetaData(receipt : List<List<Text.Element>>) : List<List<Text.Element>> {
-        val indexToRemoveMetaData = mutableListOf<Int>()
+        val indexToRemoveMetaDataFooter = mutableListOf<Int>()
+        val indexToRemoveMetaDataHeader = mutableListOf<Int>()
 
         var blocks = receipt
 
-        val constantWords = listOf<String>("TOTAL", "SUBTOTAL", "TAX")
+        val footerConstantWords = listOf<String>("TOTAL", "SUBTOTAL", "TAX")
+        val headerConstantWords = listOf<String>("Member", "ST#", "TR#", "E&OE", "Served", "Sobeys", "Costco", "Walmart", "Basics")
 
         var index = 0;
         blocks.forEach { block ->
             for (word in block) {
-                if (constantWords.any { word.text.contains(it) }) {
-                    indexToRemoveMetaData.add(index)
+                if (footerConstantWords.any { word.text.contains(it) }) {
+                    indexToRemoveMetaDataFooter.add(index)
+                }
+                if (headerConstantWords.any { word.text.lowercase().contains(it.lowercase()) }) {
+                    indexToRemoveMetaDataHeader.add(index)
                 }
             }
 
             index += 1;
         }
 
-        if (indexToRemoveMetaData.isNotEmpty()) {
-            val minRemoveIndex = indexToRemoveMetaData.min()
+        if (indexToRemoveMetaDataFooter.isNotEmpty()) {
+            val minRemoveIndex = indexToRemoveMetaDataFooter.min()
             blocks = blocks.slice(0 until minRemoveIndex)
+        }
+
+        if (indexToRemoveMetaDataHeader.isNotEmpty()) {
+            val maxRemoveIndex = indexToRemoveMetaDataHeader.max()
+            blocks = blocks.slice(maxRemoveIndex + 1 until blocks.size)
         }
 
         return blocks
@@ -174,7 +265,7 @@ class ReceiptScanner {
     fun sum(point : Point?) : Double {
         var value = 0.0
         if (point != null) {
-            value = (point.x + point.y * (3)).toDouble();
+            value = point.x.toDouble() + (point.y * 5).toDouble();
             return value
         }
         return value
@@ -259,8 +350,8 @@ class ReceiptScanner {
             var block = mutableListOf<Text.Element>()
             val topLeftPoint = remainingPointsToGroup.minByOrNull {  sum(it.cornerPoints?.get(0)) }
             topLeftPoint?.let {topLeftText ->
-                Log.i("topleft", topLeftText.text)
-                Log.i("topLeft Point", "(${topLeftText.cornerPoints?.get(0)!!.x.toString()}, ${topLeftText.cornerPoints?.get(0)!!.y.toString()})")
+                //Log.i("topleft", topLeftText.text)
+                //Log.i("topLeft Point", "(${topLeftText.cornerPoints?.get(0)!!.x.toString()}, ${topLeftText.cornerPoints?.get(0)!!.y.toString()})")
 
                 block.add(topLeftText)
                 remainingPointsToGroup.remove(topLeftText)
@@ -416,7 +507,6 @@ class ReceiptScanner {
         return receiptLines
     }
 
-
     fun printOriginalReceiptBlocks(blocks : List<Text.TextBlock>) {
         blocks.forEach {
             Log.i("block", it.text)
@@ -430,76 +520,6 @@ class ReceiptScanner {
                 text += it.text + " "
             }
             Log.i("line",text)
-
-            //val regexPattern ="(r\"\\b[A-Z.]+ [A-Z./]+ [A-Z.]+\\b|\\b[A-Z.]+ [0-9,]* [A-Z.%]*\\b|\\b[A-Z.!]+ [A-Z.]+\\b|\\b[A-Z]+\\b\")"
-
-            //val regexPattern = "(r\"\\d{1,2},\\d{2}[ ]\")"
-
-            //val inputText = "Your input text goes here."
-
-            //val regex = Regex(regexPattern)
-            //val matches = regex.findAll(text).map { it.value }.toList()
-            //Log.i("match", matches.toString())
-            //matches.forEach {
-                //Log.i("match", it.toString())
-            //}
         }
-    }
-
-    fun getTuples(text: String): List<Pair<Double, String>> {
-        var products = mutableListOf<Pair<Double, String>>()
-        var produs_crt = 0
-        var pret_crt = 0
-        var nume_crt = 0
-        var started =
-            false  // all the text from the upper part of the receipt is unnecessary and it should be skipped
-        val lines = text.split("\n")
-        Log.i("lines", lines.toString())
-        for (line in lines) {
-            if ("total" == line.toLowerCase(Locale.getDefault())
-                || "*" in line.toLowerCase(Locale.getDefault())
-            ) {
-                break
-            }
-
-            if ("x " in line.toLowerCase(Locale.getDefault())) {
-                val trimmedLine = line.drop(line.toLowerCase(Locale.getDefault()).indexOf("x ") + 2)
-                if (trimmedLine.isEmpty()) {
-                    continue
-                }
-                val words = trimmedLine.split(' ')
-                if (words.isNotEmpty()) {
-                    if (words[0].toDoubleOrNull() != null) {
-                        val nr = words[0].toDouble()
-                        if (pret_crt == produs_crt) {
-                            products.add(Pair(nr, ""))
-                            produs_crt += 1
-                            pret_crt += 1
-                        } else {
-                            products[pret_crt] = Pair(nr, products[pret_crt].second)
-                            pret_crt += 1
-                        }
-                        started = true
-                    }
-                }
-            } else if (started
-                && !line[0].isDigit()
-                && "discount" !in line.toLowerCase(Locale.getDefault())
-                && "total" !in line.toLowerCase(Locale.getDefault())
-                && "lei" != line.toLowerCase(Locale.getDefault())
-                && "lel" != line.toLowerCase(Locale.getDefault())
-            ) {  // the text recognizer might confuse i for l
-
-                if (nume_crt == produs_crt) {
-                    products.add(Pair(0.toDouble(), line))
-                    produs_crt += 1
-                    nume_crt += 1
-                } else {
-                    products[nume_crt] = Pair(products[nume_crt].first, line)
-                    nume_crt += 1
-                }
-            }
-        }
-        return products
     }
 }
