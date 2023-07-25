@@ -73,14 +73,14 @@ class FragmentRecipes : Fragment() {
 
 
         //https://ocr.space/Content/Images/receipt-ocr-original.jpg
-        Picasso.get().load("https://i.postimg.cc/mZd1ng21/1111-receipt.jpg").into(object : Target {
+        Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(object : Target {
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 // Image loaded successfully, notify the callback
-                //image = bitmap
-                //val scanner = ReceiptScanner();
+                image = bitmap
+                val scanner = ReceiptScanner();
                 //val image = Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(imageview)
-                //Log.i("image-receipt", image.toString())
-                //scanner.parseReceiptImage(image);
+                Log.i("image-receipt", image.toString())
+                scanner.parseReceiptImage(image);
             }
 
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {

@@ -2,14 +2,9 @@ package com.example.androidapp
 
 
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -35,18 +30,34 @@ class FragmentReceiptScanner : Fragment() {
     private val REQUEST_CODE_PERMISSIONS = 10
     private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA)
 
-    /*private var activityResultLauncher: ActivityResultLauncher<Array<String>> = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()) { result ->
-        var allAreGranted = true
-        for(b in result.values) {
-            allAreGranted = allAreGranted && b
-        }
+    private val orientationEventListener by lazy {
+        object : OrientationEventListener(requireActivity()) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) {
+                    return
+                }
 
-        if(allAreGranted) {
-            //startCamera()
-        }
-    }*/
+                val rotation = when (orientation) {
+                    in 45 until 135 -> Surface.ROTATION_270
+                    in 135 until 225 -> Surface.ROTATION_180
+                    in 225 until 315 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
 
+                imageCapture.targetRotation = rotation
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        orientationEventListener.enable()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        orientationEventListener.disable()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +69,6 @@ class FragmentReceiptScanner : Fragment() {
         val view = binding.root
         previewView = binding.previewView
         requestCameraPermission()
-        //initPreview()
         binding.fabCapture.setOnClickListener {
             takePicture()
         }
@@ -147,22 +157,13 @@ class FragmentReceiptScanner : Fragment() {
             ContextCompat.getMainExecutor(requireActivity()),
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
-                    //get bitmap from image
-                    //val bitmap = imageProxyToBitmap(image)
-                    //super.onCaptureSuccess(image)
 
                     Log.i("rotation", image.imageInfo.rotationDegrees.toString())
 
                     val scanner = ReceiptScanner();
-                    //val image = Picasso.get().load("https://ocr.space/Content/Images/receipt-ocr-original.jpg").into(imageview)
-                    //Log.i("image-receipt", image.toString())
+
                     scanner.parseReceiptMediaImage(image);
 
-                    //val bitmap = image.convertImageProxyToBitmap()
-                    //val r = rotateImage(bitmap, image.imageInfo.rotationDegrees.toFloat())
-                    //binding.imageView.visibility = View.VISIBLE
-                    //binding.imageView.setImageBitmap(r)
-                    //binding.previewView.visibility = View.INVISIBLE
                     image.close()
                 }
 
@@ -170,22 +171,5 @@ class FragmentReceiptScanner : Fragment() {
                     Log.d("TAG", "Image capture failed ${exception.message}")
                 }
             })
-    }
-
-    fun ImageProxy.convertImageProxyToBitmap(): Bitmap {
-        val buffer = planes[0].buffer
-        buffer.rewind()
-        val bytes = ByteArray(buffer.capacity())
-        buffer.get(bytes)
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-    }
-
-    fun rotateImage(source: Bitmap, angle: Float): Bitmap? {
-        val matrix = Matrix()
-        matrix.postRotate(angle)
-        return Bitmap.createBitmap(
-            source, 0, 0, source.width, source.height,
-            matrix, true
-        )
     }
 }
