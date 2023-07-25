@@ -113,6 +113,7 @@ class ReceiptScanner {
         var numericQuantity = 1.0
 
         val pattern = "(\\d+(?:\\.\\d+)?)(\\s*?)((?:grams|CT|dozens|gm|kg|kilogram|kilo gram| packs| kgram|packets|pair| ounce|spoon|piece))".toRegex()
+        //improve
         val pattern2 = "^\\d+\\s*".toRegex()
 
         val getUnit = Regex("[\\s\\p{P}\\d]")

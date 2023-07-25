@@ -1,6 +1,8 @@
 package com.example.androidapp
 
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.androidapp.databinding.FragmentScannerBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 
@@ -59,6 +62,7 @@ class FragmentReceiptScanner : Fragment() {
         orientationEventListener.disable()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,6 +75,22 @@ class FragmentReceiptScanner : Fragment() {
         requestCameraPermission()
         binding.fabCapture.setOnClickListener {
             takePicture()
+        }
+
+        val fab: FloatingActionButton = view.findViewById(R.id.fabCapture)
+
+        fab.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    ObjectAnimator.ofFloat(view, "scaleX", 0.9f).start()
+                    ObjectAnimator.ofFloat(view, "scaleY", 0.9f).start()
+                }
+                MotionEvent.ACTION_UP -> {
+                    ObjectAnimator.ofFloat(view, "scaleX", 1f).start()
+                    ObjectAnimator.ofFloat(view, "scaleY", 1f).start()
+                }
+            }
+            false
         }
 
         return view
