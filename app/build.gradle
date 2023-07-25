@@ -81,6 +81,9 @@ protobuf {
 dependencies {
     def camerax_version = "1.2.0-alpha03"
 
+    def lottieVersion = "6.1.0"
+
+    implementation "com.airbnb.android:lottie:$lottieVersion"
     implementation 'io.grpc:grpc-okhttp:1.47.0'
     implementation 'io.grpc:grpc-protobuf-lite:1.47.0'
     implementation 'io.grpc:grpc-stub:1.47.0'

@@ -4,7 +4,9 @@ package com.example.androidapp
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.*
 import androidx.camera.core.*
@@ -15,9 +17,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.example.androidapp.databinding.FragmentScannerBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
+import android.widget.Toast;
+
 
 
 class FragmentReceiptScanner : Fragment() {
@@ -73,11 +78,22 @@ class FragmentReceiptScanner : Fragment() {
         val view = binding.root
         previewView = binding.previewView
         requestCameraPermission()
-        binding.fabCapture.setOnClickListener {
-            takePicture()
-        }
+
+        var success : LottieAnimationView = view.findViewById(R.id.processed)
 
         val fab: FloatingActionButton = view.findViewById(R.id.fabCapture)
+
+
+        binding.fabCapture.setOnClickListener {
+            fab.visibility = View.INVISIBLE
+            binding.previewView.visibility = View.INVISIBLE
+            Toast.makeText(requireActivity(), "Receipt has successfully been processed", Toast.LENGTH_LONG).show();
+            success.playAnimation()
+            takePicture()
+            Handler().postDelayed({
+                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
+            }, 1500)
+        }
 
         fab.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
