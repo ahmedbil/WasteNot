@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import androidx.camera.core.*
@@ -57,13 +58,13 @@ class FragmentReceiptScanner : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         orientationEventListener.enable()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         orientationEventListener.disable()
     }
 
@@ -87,12 +88,12 @@ class FragmentReceiptScanner : Fragment() {
         binding.fabCapture.setOnClickListener {
             fab.visibility = View.INVISIBLE
             binding.previewView.visibility = View.INVISIBLE
-            Toast.makeText(requireActivity(), "Receipt has successfully been processed", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireActivity(), "Receipt has successfully been parsed", Toast.LENGTH_LONG).show();
             success.playAnimation()
             takePicture()
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
-            }, 1500)
+            }, 2000)
         }
 
         fab.setOnTouchListener { view, motionEvent ->
@@ -196,7 +197,7 @@ class FragmentReceiptScanner : Fragment() {
 
                     Log.i("rotation", image.imageInfo.rotationDegrees.toString())
 
-                    val scanner = ReceiptScanner();
+                    val scanner = ReceiptScanner.getInstance();
 
                     scanner.parseReceiptMediaImage(image);
 

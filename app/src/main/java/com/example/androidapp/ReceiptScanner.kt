@@ -9,21 +9,34 @@ import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.*
+import javax.inject.Singleton
 import kotlin.math.pow
 
-class ReceiptScanner {
+class ReceiptScanner private constructor() {
 
-    private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    private var textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     private var diff = 0.0
+
     private var total = 0.0
+    companion object {
+
+        @Volatile
+        private var instance: ReceiptScanner? = null
+
+        fun getInstance() =
+            instance ?: synchronized(this) {
+                instance ?: ReceiptScanner().also { instance = it }
+            }
+    }
 
     fun parseReceiptImage(imageBitmap: Bitmap?): Task<Text>? {
         val image = imageBitmap?.let { InputImage.fromBitmap(it, 0) }
         return image?.let {
-            textRecognizer.process(it)
+            textRecognizer!!.process(it)
                 .addOnSuccessListener { text ->
                     parseText(text, it.width)
                 }
@@ -37,7 +50,7 @@ class ReceiptScanner {
     fun parseReceiptMediaImage(imageProxy: ImageProxy?): Task<Text>? {
         val image = imageProxy?.let { InputImage.fromMediaImage(it.image!!, imageProxy.imageInfo.rotationDegrees) }
         return image?.let {
-            textRecognizer.process(it)
+            textRecognizer!!.process(it)
                 .addOnSuccessListener { text ->
                     parseText(text, it.width)
                 }
