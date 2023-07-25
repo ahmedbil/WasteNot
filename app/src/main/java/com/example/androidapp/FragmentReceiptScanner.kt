@@ -3,6 +3,7 @@ package com.example.androidapp
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -23,7 +24,11 @@ import com.example.androidapp.databinding.FragmentScannerBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import android.widget.Toast;
-
+import com.google.android.gms.tasks.Tasks.await
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import javax.security.auth.callback.Callback
 
 
 class FragmentReceiptScanner : Fragment() {
@@ -35,6 +40,8 @@ class FragmentReceiptScanner : Fragment() {
 
     private lateinit var previewView: PreviewView
     private lateinit var imageCapture: ImageCapture
+    private lateinit var successToast : LottieAnimationView
+    private lateinit var warningToast : LottieAnimationView
     private var preview: Preview? = null
     private val REQUEST_CODE_PERMISSIONS = 10
     private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA)
@@ -80,7 +87,9 @@ class FragmentReceiptScanner : Fragment() {
         previewView = binding.previewView
         requestCameraPermission()
 
-        var success : LottieAnimationView = view.findViewById(R.id.processed)
+        successToast = view.findViewById(R.id.processed)
+        warningToast = view.findViewById(R.id.warning)
+        warningToast.visibility = View.INVISIBLE
 
         val fab: FloatingActionButton = view.findViewById(R.id.fabCapture)
 
@@ -88,12 +97,7 @@ class FragmentReceiptScanner : Fragment() {
         binding.fabCapture.setOnClickListener {
             fab.visibility = View.INVISIBLE
             binding.previewView.visibility = View.INVISIBLE
-            Toast.makeText(requireActivity(), "Receipt has successfully been parsed", Toast.LENGTH_LONG).show();
-            success.playAnimation()
             takePicture()
-            Handler(Looper.getMainLooper()).postDelayed({
-                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
-            }, 2000)
         }
 
         fab.setOnTouchListener { view, motionEvent ->
@@ -191,22 +195,53 @@ class FragmentReceiptScanner : Fragment() {
 
     private fun takePicture() {
         imageCapture.takePicture(
+
             ContextCompat.getMainExecutor(requireActivity()),
+
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
 
                     Log.i("rotation", image.imageInfo.rotationDegrees.toString())
 
-                    val scanner = ReceiptScanner.getInstance();
+                        val scanner = ReceiptScanner.getInstance();
 
-                    scanner.parseReceiptMediaImage(image);
+                        scanner.parseReceiptMediaImage(image) { result ->
 
-                    image.close()
+                            displayToastMessage(result)
+
+                            image.close()
+                        }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     Log.d("TAG", "Image capture failed ${exception.message}")
+                    displayToastMessage(null)
                 }
             })
+    }
+
+    fun displayToastMessage(result : List<Pair<String, Pair<Double, String>>>?) {
+        var navFragment : Fragment = FragmentRecipes();
+
+        var toastMessage : String = getString(R.string.success_toast)
+
+        if (result.isNullOrEmpty()) {
+            toastMessage = getString(R.string.warning_toast)
+
+            navFragment = FragmentReceiptScanner()
+
+            warningToast.visibility = View.VISIBLE
+
+            warningToast.playAnimation()
+
+        } else {
+            successToast.playAnimation()
+        }
+
+        Toast.makeText(requireActivity(), toastMessage, Toast.LENGTH_LONG).show();
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, navFragment).commit()
+        }, 2000)
     }
 }

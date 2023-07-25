@@ -6,7 +6,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="recipes_title">Recipes</string>
     <string name="recipes_filter">Recipes Filter</string>
     <string name="inventory_title">Inventory</string>
@@ -17,4 +16,6 @@
     <string name="recipe_suggestion_text">Based on your inventory...</string>
     <string name="searchbar_hint">Recipe names</string>
     <string name="capture_image">Capture</string>
+    <string name="success_toast">Receipt has successfully been parsed</string>
+    <string name="warning_toast">Receipt not successfully parsed</string>
 </resources>

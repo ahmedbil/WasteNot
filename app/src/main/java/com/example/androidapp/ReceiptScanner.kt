@@ -33,26 +33,30 @@ class ReceiptScanner private constructor() {
             }
     }
 
-    fun parseReceiptImage(imageBitmap: Bitmap?): Task<Text>? {
+    fun parseReceiptImage(imageBitmap: Bitmap?): List<Pair<String, Pair<Double, String>>>? {
         val image = imageBitmap?.let { InputImage.fromBitmap(it, 0) }
-        return image?.let {
+        var receiptParsedResults : List<Pair<String, Pair<Double, String>>>? = null
+        image?.let {
             textRecognizer!!.process(it)
                 .addOnSuccessListener { text ->
-                    parseText(text, it.width)
+                    receiptParsedResults = parseText(text, it.width)
                 }
                 .addOnFailureListener { e ->
                     Log.e("ReceiptParser", "Error parsing receipt image: ${e.message}", e)
                 }
         }
+        return receiptParsedResults
     }
 
     //@ExperimentalGetImage
-    fun parseReceiptMediaImage(imageProxy: ImageProxy?): Task<Text>? {
+    fun parseReceiptMediaImage(imageProxy: ImageProxy?, callback : (List<Pair<String, Pair<Double, String>>>?) -> Unit) {
         val image = imageProxy?.let { InputImage.fromMediaImage(it.image!!, imageProxy.imageInfo.rotationDegrees) }
-        return image?.let {
+        var receiptParsedResults : List<Pair<String, Pair<Double, String>>>? = null
+        image?.let {
             textRecognizer!!.process(it)
                 .addOnSuccessListener { text ->
-                    parseText(text, it.width)
+                    receiptParsedResults = parseText(text, it.width)
+                    callback(receiptParsedResults)
                 }
                 .addOnFailureListener { e ->
                     Log.e("ReceiptParser", "Error parsing receipt image: ${e.message}", e)
@@ -60,7 +64,7 @@ class ReceiptScanner private constructor() {
         }
     }
 
-    private fun parseText(text: Text, width: Int) {
+    private fun parseText(text: Text, width: Int) : List<Pair<String, Pair<Double, String>>>{
         val blocks = text.textBlocks
 
         val receiptLines = getSortedReceiptLineList(blocks)
@@ -71,21 +75,18 @@ class ReceiptScanner private constructor() {
 
         getProductNameAndQuantity(cleanReceiptLinesSorted)
 
-        Log.i("size", cleanReceiptLinesSorted.size.toString())
-
         printReceiptBlocks(cleanReceiptLinesSorted)
 
         val products = getProductNameAndQuantity(cleanReceiptLinesSorted)
 
-        products.forEach {
-            Log.i("product", "name: ${it.first}, unit: ${it.second.second}, amount: ${it.second.first}")
-        }
+        printReceiptProducts(products)
 
-        Log.i("accuracy increase", ((diff / total) * 100).toString())
+        printAccuracy()
 
+        return products
     }
 
-    fun getProductNameAndQuantity(receipt : List<List<Text.Element>>) : List<Pair<String, Pair<Double, String>>> {
+    private fun getProductNameAndQuantity(receipt : List<List<Text.Element>>) : List<Pair<String, Pair<Double, String>>> {
 
         var product = mutableListOf<Pair<String, Pair<Double, String>>>()
 
@@ -106,7 +107,7 @@ class ReceiptScanner private constructor() {
         return product
     }
 
-    fun getProductName(text : String) : String {
+    private fun getProductName(text : String) : String {
         var name = ""
         val pattern = Regex("\\b[a-zA-Z]+\\b")
         var match = pattern.findAll(text).map { it.value }.toList()
@@ -122,7 +123,7 @@ class ReceiptScanner private constructor() {
         return name
     }
 
-    fun getProductQuantity(text : String) : Pair<Double, String> {
+    private fun getProductQuantity(text : String) : Pair<Double, String> {
         var numericQuantity = 1.0
 
         val pattern = "(\\d+(?:\\.\\d+)?)(\\s*?)((?:grams|CT|dozens|gm|kg|kilogram|kilo gram| packs| kgram|packets|pair| ounce|spoon|piece))".toRegex()
@@ -155,7 +156,7 @@ class ReceiptScanner private constructor() {
         return Pair(numericQuantity, unit)
     }
 
-    fun satisfiesRule(word : String) : Boolean {
+    private fun satisfiesRule(word : String) : Boolean {
         var isSatisfied = true;
 
         val fourConsecCharPattern = Regex("(\\w)\\1{3}")
@@ -204,7 +205,7 @@ class ReceiptScanner private constructor() {
         return isSatisfied
     }
 
-    fun removeReceiptMetaData(receipt : List<List<Text.Element>>) : List<List<Text.Element>> {
+    private fun removeReceiptMetaData(receipt : List<List<Text.Element>>) : List<List<Text.Element>> {
         val indexToRemoveMetaDataFooter = mutableListOf<Int>()
         val indexToRemoveMetaDataHeader = mutableListOf<Int>()
 
@@ -276,7 +277,7 @@ class ReceiptScanner private constructor() {
         return lineList.sortedWith(compareBy({ it.cornerPoints?.get(0)!!.y }, { it.cornerPoints?.get(0)!!.x }));
     }
 
-    fun sum(point : Point?) : Double {
+    private fun sum(point : Point?) : Double {
         var value = 0.0
         if (point != null) {
             value = point.x.toDouble() + (point.y * 5).toDouble();
@@ -285,7 +286,7 @@ class ReceiptScanner private constructor() {
         return value
     }
 
-    fun minus(point : Point?) : Double {
+    private fun minus(point : Point?) : Double {
         var value = 0.0
         if (point != null) {
             value = (point.x - point.y).toDouble()
@@ -294,20 +295,20 @@ class ReceiptScanner private constructor() {
         return value
     }
 
-    fun updateAccuracyCheck(pointX : Double, pointY : Double, topLeftPointX : Double, topLeftPointY : Double, imgWidth : Double, interpolantDistance : Double) {
+    private fun updateAccuracyCheck(pointX : Double, pointY : Double, topLeftPointX : Double, topLeftPointY : Double, imgWidth : Double, interpolantDistance : Double) {
         val normal = pDistance(pointX, pointY, topLeftPointX, topLeftPointY, imgWidth, topLeftPointY)
         diff += (normal - interpolantDistance)
         total += normal;
     }
 
-    fun blockExtractInstrumentation(pointText : String, pointX : Double, pointY : Double, topLeftPointX : Double, topLeftPointY : Double, imgWidth : Double, interpolantDistance : Double) {
+    private fun blockExtractInstrumentation(pointText : String, pointX : Double, pointY : Double, topLeftPointX : Double, topLeftPointY : Double, imgWidth : Double, interpolantDistance : Double) {
         Log.i("interpolate distance", interpolantDistance.toString())
         Log.i("non-distance", pDistance(pointX, pointY, topLeftPointX, topLeftPointY, imgWidth, topLeftPointY).toString())
         Log.i("point", pointText)
         Log.i("point Point", "(${pointX}, ${pointY})")
     }
 
-    fun extractReceiptBlock(points : MutableList<Text.Element>, block: MutableList<Text.Element>, imgWidth : Double, topLeftText : Text.Element, threshold : Double, interpolantOption : Int, isSecondPass : Boolean) : MutableList<Text.Element> {
+    private fun extractReceiptBlock(points : MutableList<Text.Element>, block: MutableList<Text.Element>, imgWidth : Double, topLeftText : Text.Element, threshold : Double, interpolantOption : Int, isSecondPass : Boolean) : MutableList<Text.Element> {
         val remainingPoints= mutableListOf<Text.Element>()
 
         var topLeftPointX = block[0].cornerPoints?.get(0)!!.x.toDouble()
@@ -355,7 +356,7 @@ class ReceiptScanner private constructor() {
         return remainingPoints
     }
 
-    fun extractReceiptBlocks(points: List<Text.Element>, radius: Double, width : Int): List<List<Text.Element>> {
+    private fun extractReceiptBlocks(points: List<Text.Element>, radius: Double, width : Int): List<List<Text.Element>> {
         val blocks = mutableListOf<List<Text.Element>>()
         var remainingPointsToGroup = points.toMutableList()
 
@@ -386,7 +387,7 @@ class ReceiptScanner private constructor() {
         return blocks
     }
 
-    fun getInterpolantValueAtX(block : List<Text.Element>, interpolantOption : Int, x : Double) : Double {
+    private fun getInterpolantValueAtX(block : List<Text.Element>, interpolantOption : Int, x : Double) : Double {
         val blockSize = block.size
         val leftMostPoint = block[0];
         val leftEndPoint = block[blockSize - 2]
@@ -421,7 +422,7 @@ class ReceiptScanner private constructor() {
 
         return 0.0
     }
-    fun pDistance(x : Double, y : Double, x1 : Double, y1 : Double, x2 : Double, y2 : Double) : Double {
+    private fun pDistance(x : Double, y : Double, x1 : Double, y1 : Double, x2 : Double, y2 : Double) : Double {
         var A = x2 - x1;
         var B = y2 - y1;
         var C = y1 - y;
@@ -439,7 +440,7 @@ class ReceiptScanner private constructor() {
         return Math.abs(diff) / Math.sqrt(squareSum)
     }
 
-    fun lagrange_interpolate(f: List<Point>, xi: Double, n: Int): Double {
+    private fun lagrange_interpolate(f: List<Point>, xi: Double, n: Int): Double {
         var result = 0.0 // Initialize result
         for (i in 0 until n) {
             // Compute individual terms of above formula
@@ -455,7 +456,7 @@ class ReceiptScanner private constructor() {
     }
 
 
-    fun lagrange_interpolate_text(f: List<Text.Element>, xi: Double, n: Int): Double {
+    private fun lagrange_interpolate_text(f: List<Text.Element>, xi: Double, n: Int): Double {
         var result = 0.0 // Initialize result
         for (i in 0 until n) {
             // Compute individual terms of above formula
@@ -472,7 +473,7 @@ class ReceiptScanner private constructor() {
         return result
     }
 
-    fun linear_interpolate(a : Text.Element, b : Text.Element, xi : Double) : Double {
+    private fun linear_interpolate(a : Text.Element, b : Text.Element, xi : Double) : Double {
 
         val x1 = a.cornerPoints?.get(0)!!.x.toDouble()
         val y1 = a.cornerPoints?.get(0)!!.y.toDouble()
@@ -483,7 +484,7 @@ class ReceiptScanner private constructor() {
 
     }
 
-    fun linear_interpolate(a : Text.Element, b : Point, xi : Double) : Double {
+    private fun linear_interpolate(a : Text.Element, b : Point, xi : Double) : Double {
 
         val x1 = a.cornerPoints?.get(0)!!.x.toDouble()
         val y1 = a.cornerPoints?.get(0)!!.y.toDouble()
@@ -494,7 +495,7 @@ class ReceiptScanner private constructor() {
 
     }
 
-    fun getAveragePoint(f: List<Text.Element>) : Point {
+    private fun getAveragePoint(f: List<Text.Element>) : Point {
         val len = f.size
         var x = 0.0;
         var y = 0.0;
@@ -509,7 +510,7 @@ class ReceiptScanner private constructor() {
 
         return Point(x.toInt(), y.toInt())
     }
-    fun googleGetReceiptBlocks(text : Text) : List<Text.TextBlock>  {
+    private fun googleGetReceiptBlocks(text : Text) : List<Text.TextBlock>  {
         var receiptLines = mutableListOf<Text.TextBlock>()
         val blocks = text.textBlocks
         for (block in blocks) {
@@ -521,13 +522,13 @@ class ReceiptScanner private constructor() {
         return receiptLines
     }
 
-    fun printOriginalReceiptBlocks(blocks : List<Text.TextBlock>) {
+    private fun printOriginalReceiptBlocks(blocks : List<Text.TextBlock>) {
         blocks.forEach {
             Log.i("block", it.text)
         }
     }
 
-    fun printReceiptBlocks(blocks : List<List<Text.Element>>) {
+    private fun printReceiptBlocks(blocks : List<List<Text.Element>>) {
         blocks.forEach {
             var text = ""
             it.forEach {
@@ -535,5 +536,15 @@ class ReceiptScanner private constructor() {
             }
             Log.i("line",text)
         }
+    }
+
+    private fun printReceiptProducts(products : List<Pair<String, Pair<Double, String>>>) {
+        products.forEach {
+            Log.i("product", "name: ${it.first}, unit: ${it.second.second}, amount: ${it.second.first}")
+        }
+    }
+
+    private fun printAccuracy() {
+        Log.i("accuracy increase", ((diff / total) * 100).toString())
     }
 }
