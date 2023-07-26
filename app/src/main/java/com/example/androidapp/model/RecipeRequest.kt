@@ -16,7 +16,7 @@ data class RecipeRequest (
 ){
     fun toBody(): RequestBody {
         val formBody = JSONObject()
-        formBody.put("name", "")
+        formBody.put("name", query)
         formBody.put("page_size", pageSize)
         formBody.put("includedIngredients", JSONArray())
         formBody.put("excludedIngredients", JSONArray())

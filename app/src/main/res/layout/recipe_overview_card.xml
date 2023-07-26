@@ -23,7 +23,7 @@
             <ImageView
                     android:layout_width="match_parent"
                     android:scaleType="centerCrop"
-                    android:layout_height="175dp" android:background="@drawable/ic_launcher_background"
+                    android:layout_height="175dp" android:background="#555555"
                     android:id="@+id/recipe_image"/>
         </com.google.android.material.card.MaterialCardView>
 
@@ -37,11 +37,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="32sp"/>
+                    android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="25sp"/>
 
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" app:srcCompat="@drawable/shopping_cart"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp" app:srcCompat="@drawable/shopping_cart"
                     android:layout_alignParentRight="true"
                     android:id="@+id/shopping_cart"/>
 
