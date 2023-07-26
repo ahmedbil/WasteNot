@@ -29,7 +29,9 @@ class FragmentReceiptScanner : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var previewView: PreviewView
-    private lateinit var imageCapture: ImageCapture
+    private var imageCapture: ImageCapture = ImageCapture.Builder()
+        .setJpegQuality(100)
+        .build()
     private lateinit var successToast : LottieAnimationView
     private lateinit var warningToast : LottieAnimationView
     private var preview: Preview? = null
@@ -144,7 +146,6 @@ class FragmentReceiptScanner : Fragment() {
 
     private fun startCamera() {
         initPreview()
-        initImageCapture()
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
@@ -171,12 +172,6 @@ class FragmentReceiptScanner : Fragment() {
         private fun initPreview() {
             preview = Preview.Builder().build()
             preview?.setSurfaceProvider(previewView.surfaceProvider)
-        }
-
-        private fun initImageCapture() {
-            imageCapture = ImageCapture.Builder()
-                .setJpegQuality(100)
-                .build()
         }
 
     private fun takePicture() {
