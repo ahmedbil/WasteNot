@@ -86,7 +86,7 @@ class EditReceiptResultsFragment : Fragment() {
         }
 
         saveButton.setOnClickListener {
-            saveChanges()
+            //saveChanges()
         }
 
         return rootView
