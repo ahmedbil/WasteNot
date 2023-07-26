@@ -1,15 +1,16 @@
 package com.example.androidapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import android.widget.EditText
-import android.widget.ImageButton
 
 
 // Initialize an array of type Ingredient with values
@@ -98,6 +99,10 @@ class EditModeFragment : Fragment() {
         val saveButton: MaterialButton = rootView.findViewById(R.id.saveButton)
 
         val ingredientMutList = addIngredientsToMutList(ingredientsArray, ingredients)
+
+        val flag = requireArguments().getBoolean("scannedItems")
+
+        val list: ArrayList<Pair<String, Pair<Double, String>>>? = requireArguments().getSerializable("result") as ArrayList<Pair<String, Pair<Double, String>>>?
 
 
         ingredientAdapter = IngredientAdapter(ingredientMutList) { position ->

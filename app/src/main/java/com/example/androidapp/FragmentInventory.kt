@@ -27,17 +27,21 @@ private val binding get() = _binding!!
 class Adapter(private val ingredient_list: MutableList<String>, private val ingredient_list_quant: MutableList<String>) : RecyclerView.Adapter<Adapter.MyViewHolder>() {
 
     private val checkedItems = mutableListOf<Int>()
+
     private var checkboxVisibility = View.INVISIBLE
     // This method creates a new ViewHolder object for each item in the RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // Inflate the layout for each item and return a new ViewHolder object
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
+
         val viewHolder = MyViewHolder(itemView)
+
         viewHolder.ingredient.setOnLongClickListener {
             toggleCheckBoxVisiblity()
             updateView()
             return@setOnLongClickListener true
         }
+
         return viewHolder
     }
 
@@ -127,12 +131,15 @@ class FragmentInventory : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // getting the ingredientlist
         // Assign ingredientlist to ItemAdapter
         val itemAdapter = Adapter(ingredient_list, ingredient_list_quant)
+
         // Set the LayoutManager that
         // this RecyclerView will use.
         val recyclerView: RecyclerView = view.findViewById(R.id.ingredient_list)
+
         recyclerView.layoutManager = LinearLayoutManager(context)
         // adapter instance is set to the
         // recyclerview to inflate the items.
@@ -142,7 +149,6 @@ class FragmentInventory : Fragment() {
         binding.scanItems.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
         }
-
 
         binding.addItem.setOnClickListener {
             showAddItemDialog()

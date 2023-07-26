@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -21,7 +22,6 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.androidapp.databinding.FragmentScannerBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
-import android.widget.Toast
 
 
 class FragmentReceiptScanner : Fragment() {
@@ -202,7 +202,7 @@ class FragmentReceiptScanner : Fragment() {
     }
 
     fun displayToastMessage(result : List<Pair<String, Pair<Double, String>>>?) {
-        var navFragment : Fragment = FragmentRecipes();
+        var navFragment : Fragment = EditModeFragment();
 
         var toastMessage : String = getString(R.string.success_toast)
 
@@ -216,6 +216,10 @@ class FragmentReceiptScanner : Fragment() {
             warningToast.playAnimation()
 
         } else {
+            val args = Bundle()
+            args.putBoolean("scannedItems", true)
+            args.putSerializable("result", ArrayList<Pair<String, Pair<Double, String>>>(result))
+            navFragment.setArguments(args)
             successToast.playAnimation()
         }
 
