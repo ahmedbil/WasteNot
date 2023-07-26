@@ -100,6 +100,13 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         return call
     }
 
+    private fun delete(path: String, callback: Callback): Call {
+        val request = buildRequest("delete", path)
+        val call = client.newCall(request)
+        call.enqueue(callback)
+        return call
+    }
+
     fun getHeartbeat() {
         get("heartbeat",
             createCallback<String>(
@@ -113,8 +120,37 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         get("users/inventory",createCallback<Inventory>(cb))
     }
 
+    fun getFoodItemFromInventory(foodItem: String, b: (Inventory)->Unit) {
+        get("users/inventory/"+foodItem, createCallback<Inventory>(cb))
+    }
+
+    fun addFoodItemToInventory(foodItem: String, b: (Inventory)->Unit) {
+        post("users/inventory/", foodItem,createCallback<Inventory>(cb))
+    }
+
+    fun deleteFoodItemFromInventory(foodItem: String, b: (Inventory)->Unit) {
+        delete("users/inventory/"+foodItem,createCallback<Inventory>(cb))
+    }
+
     fun getShoppingList(cb: (ShoppingList)->Unit) {
-        get("users/inventory", createCallback<ShoppingList>(cb))
+        get("users/shopping-list", createCallback<ShoppingList>(cb))
+    }
+
+    //additem to shoppinglist has @get endpoint annotation on backend
+    fun addItemToShoppingList(item: String, cb: (ShoppingList)->Unit) {
+        get("users/shopping-list/"+item, createCallback<ShoppingList>(cb))
+    }
+
+    fun RemoveItemFromShoppingList(item: String, cb: (ShoppingList)->Unit) {
+        delete("users/shopping-list/"+item, createCallback<ShoppingList>(cb))
+    }
+
+    fun deleteShoppingList(cb: (ShoppingList)->Unit) {
+        delete("users/shopping-list", createCallback<ShoppingList>(cb))
+    }
+
+    fun getAnalyticsData(cb: (String)->Unit) {
+        get("users/shopping-list", createCallback<ShoppingList>(cb))
     }
 
     fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
