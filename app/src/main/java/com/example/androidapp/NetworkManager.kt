@@ -149,8 +149,9 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         delete("users/shopping-list", createCallback<ShoppingList>(cb))
     }
 
-    fun getAnalyticsData(cb: (String)->Unit) {
-        get("users/inventory/analytics", createCallback<ShoppingList>(cb))
+    fun getAnalyticsData(cb: (Int)->Unit) {
+        get("users/inventory/analytics", createCallback<ShoppingList>(cb
+        {intStr -> intStr.toInt()}))
     }
 
     fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
@@ -187,7 +188,6 @@ class NetworkManager private constructor(val addr: String, val applicationContex
     private inline fun<reified T> deserializer(): (String) -> T {
         return {str:String -> Json.decodeFromString(str)}
     }
-
     companion object {
         private const val domain = "api.aws.melnyk.dev"
         private var instance: NetworkManager? = null
