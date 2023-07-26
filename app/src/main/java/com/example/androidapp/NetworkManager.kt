@@ -150,7 +150,7 @@ class NetworkManager private constructor(val addr: String, val applicationContex
     }
 
     fun getAnalyticsData(cb: (String)->Unit) {
-        get("users/shopping-list", createCallback<ShoppingList>(cb))
+        get("users/inventory/analytics", createCallback<ShoppingList>(cb))
     }
 
     fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
