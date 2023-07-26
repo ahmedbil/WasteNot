@@ -1,41 +1,41 @@
 package com.example.androidapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.androidapp.databinding.ActivityMainBinding
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navbarView: BottomNavigationView
-    private lateinit var fragmentContainer: ConstraintLayout
-    private lateinit var topAppBar: MaterialToolbar
     private lateinit var nwManager: NetworkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        nwManager = NetworkManager("pixa.cubetex.net:8080")
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        navbarView = findViewById(R.id.bottom_navigation)
-        fragmentContainer = findViewById(R.id.fragment_container)
-        topAppBar = findViewById(R.id.top_app_bar)
+        nwManager = NetworkManager.initialize(applicationContext) {
+            nwManager.getHeartbeat()
+            if (!it.isSignedIn) {
+                // Authenticate the user first.
+                val intent = Intent(this, AuthenticationActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        setContentView(binding.root)
 
         // Load the recipes page by default.
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
 
         // Set up listeners for the bottom navigation drawer.
-        navbarView.setOnItemSelectedListener { item ->
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.page_recipes -> {
-                    topAppBar.setTitle(R.string.recipes_title)
+                    binding.topAppBar.setTitle(R.string.recipes_title)
                     // update the action bar for recipes search page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.page_inventory -> {
-                    topAppBar.setTitle(R.string.inventory_title)
+                    binding.topAppBar.setTitle(R.string.inventory_title)
                     // update the action bar for inventory page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity() {
 
     // Updates the action bar based on the specific fragment page
     fun updateActionBar() {
-        val recipeFilterButton = topAppBar.menu.findItem(R.id.action_recipe_filter)
+        val recipeFilterButton = binding.topAppBar.menu.findItem(R.id.action_recipe_filter)
 
         //enable filter button if it is recipe search page.
-        recipeFilterButton.isVisible = topAppBar.title == "Recipes"
+        recipeFilterButton.isVisible = binding.topAppBar.title == "Recipes"
     }
 }
