@@ -31,4 +31,16 @@
     <string name="select">Select</string>
     <string name="add_to_inventory">Add to Inventory</string>
     <string name="delete">Delete</string>
+    <string name="add_item">Add Item</string>
+    <string name="scan_items">Scan Items</string>
+    <string name="remove_items">Remove Selected</string>
+    <string name="edit_items">Edit Selected</string>
+    <string name="item_name">Name</string>
+    <string name="item_unit">Unit</string>
+    <string name="item_quantity">Quantity</string>
+    <string name="item_purchase_date">Purchase Date</string>
+    <string name="item_expiry">Expiry Date</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

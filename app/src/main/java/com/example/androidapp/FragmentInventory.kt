@@ -1,6 +1,8 @@
 package com.example.androidapp
 
 import AddItemDialogFragment
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +35,7 @@ class Adapter(private val ingredient_list: MutableList<String>, private val ingr
         val viewHolder = MyViewHolder(itemView)
         viewHolder.ingredient.setOnLongClickListener {
             toggleCheckBoxVisiblity()
-            binding.delete.visibility = if (binding.delete.isVisible) View.GONE else View.VISIBLE
+            updateView()
             return@setOnLongClickListener true
         }
         return viewHolder
@@ -49,7 +51,7 @@ class Adapter(private val ingredient_list: MutableList<String>, private val ingr
     // for each item in the RecyclerView
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.ingredient.text = ingredient_list[position]
-        holder.quantity.text = ingredient_list_quant[position]
+        //holder.quantity.text = ingredient_list_quant[position]
         holder.checkBox.visibility = checkboxVisibility
     }
 
@@ -75,12 +77,21 @@ class Adapter(private val ingredient_list: MutableList<String>, private val ingr
         checkedItems.clear()
     }
 
+    fun updateView() {
+        binding.deleteItems.visibility = if (binding.deleteItems.isVisible) View.GONE else View.VISIBLE
+        binding.editItems.visibility = if (binding.editItems.isVisible) View.GONE else View.VISIBLE
+        binding.scanItems.isClickable = !binding.scanItems.isClickable
+        binding.scanItems.alpha = if (binding.scanItems.isClickable) 1F else 0.2F
+        binding.addItem.isClickable = !binding.addItem.isClickable
+        binding.addItem.alpha = if (binding.addItem.isClickable) 1F else 0.2F
+    }
+
 
     // This class defines the ViewHolder object for each item in the RecyclerView
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ingredient: TextView = itemView.findViewById(R.id.ingredient)
         val checkBox: CheckBox = itemView.findViewById(R.id.check)
-        val quantity: TextView = itemView.findViewById(R.id.quantity)
+        //val quantity: TextView = itemView.findViewById(R.id.quantity)
 
         init {
             ingredient.setOnClickListener {
@@ -118,7 +129,7 @@ class FragmentInventory : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // getting the ingredientlist
         // Assign ingredientlist to ItemAdapter
-        val itemAdapter = AdapterShopping(ingredient_list, ingredient_list_quant)
+        val itemAdapter = Adapter(ingredient_list, ingredient_list_quant)
         // Set the LayoutManager that
         // this RecyclerView will use.
         val recyclerView: RecyclerView = view.findViewById(R.id.ingredient_list)
@@ -127,23 +138,24 @@ class FragmentInventory : Fragment() {
         // recyclerview to inflate the items.
         recyclerView.adapter = itemAdapter
 
-        binding.ingredientNameField.setEndIconOnClickListener {
-            val str = binding.ingredientNameField.editText?.text.toString()
-            if(str.isNotEmpty()) {
-                ingredient_list.add(str)
-                binding.ingredientNameField.editText?.text?.clear()
-                itemAdapter.notifyDataSetChanged()
-            }
+
+        binding.scanItems.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
         }
 
-        binding.delete.setOnClickListener {
+
+        binding.addItem.setOnClickListener {
+            showAddItemDialog()
+        }
+
+        binding.deleteItems.setOnClickListener {
             val selectedItems = itemAdapter.getSelectedItems()
             itemAdapter.deleteItems(selectedItems)
             itemAdapter.toggleCheckBoxVisiblity()
-            binding.delete.visibility = View.GONE
+            binding.deleteItems.visibility = View.GONE
         }
 
-        binding.editInv.setOnClickListener{
+        binding.editItems.setOnClickListener{
             val selectedItems = itemAdapter.getSelectedItems()
             val editModeFragment = EditModeFragment.newInstance(true,
                 selectedItems as ArrayList<Int>
@@ -164,7 +176,9 @@ class FragmentInventory : Fragment() {
     private fun showAddItemDialog() {
         val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
         val dialogFragment = AddItemDialogFragment()
+
+        dialogFragment.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         dialogFragment.show(fragmentManager, "AddItemDialog")
     }
-
 }

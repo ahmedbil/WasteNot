@@ -46,12 +46,12 @@ class MainActivity : AppCompatActivity() {
                     binding.topAppBar.setTitle(R.string.inventory_title)
                     // update the action bar for inventory page
                     updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
                     true
                 }
 
                 R.id.page_analytics -> {
-                    topAppBar.setTitle(R.string.analytics_title)
+                    binding.topAppBar.setTitle(R.string.analytics_title)
                     // update the action bar for inventory page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentAnalytics()).commit()
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 R.id.page_shopping_list -> {
-                    topAppBar.setTitle(R.string.shopping_list_title)
+                    binding.topAppBar.setTitle(R.string.shopping_list_title)
                     // update the action bar for inventory page
                     updateActionBar();
                     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentShoppingList()).commit()

@@ -13,19 +13,18 @@ class AddItemDialogFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_add_item_dialog, container, false)
+        val rootView = inflater.inflate(R.layout.add_item, container, false)
 
-        val itemNameEditText: TextInputEditText = rootView.findViewById(R.id.itemNameEditText)
-        val itemQuantityEditText: TextInputEditText = rootView.findViewById(R.id.itemQuantityEditText)
-        val submitButton: MaterialButton = rootView.findViewById(R.id.submitButton)
+        //val itemNameEditText: TextInputEditText = rootView.findViewById(R.id.itemNameEditText)
+        //val itemQuantityEditText: TextInputEditText = rootView.findViewById(R.id.itemQuantityEditText)
+        val submitButton: MaterialButton = rootView.findViewById(R.id.add)
+        val cancelButton: MaterialButton = rootView.findViewById(R.id.cancel)
 
         submitButton.setOnClickListener {
-            val itemName = itemNameEditText.text.toString()
-            val itemQuantity = itemQuantityEditText.text.toString()
+            dismiss()
+        }
 
-            //Add item to inventory
-
-
+        cancelButton.setOnClickListener {
             dismiss()
         }
 
