@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class RecipeViewModel : ViewModel() {
-    private var nwManager = NetworkManager.getInstance()
+    private var nwManager: NetworkManager = NetworkManager("pixa.cubetex.net:8080")
 
     // list of recipes passed by server
     private var recipes =  mutableListOf<Recipe>();
@@ -31,35 +31,22 @@ class RecipeViewModel : ViewModel() {
 
     // fetch recipes whose name matches the query.
     fun queryRecipes(query: String) {
-//        val queriedRecipes = nwManager.getRecipes(query)
-        nwManager.getHeartbeat()
-        val queriedRecipes = listOf(
-            Recipe(
-                "name",
-                listOf("a", "b"),
-                "2h",
-                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flexjobs.com%2Fblog%2Fpost%2Fworst-work-from-home-stock-photos-ever%2F&psig=AOvVaw0Usu11BujPVDMQR99mwTvN&ust=1690220552530000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCOj0_K6wpYADFQAAAAAdAAAAABAE")
-        )
+        val queriedRecipes = nwManager.getRecipes(query)
 
-        recipes.clear()
-        recipes.addAll(queriedRecipes)
-        liveRecipes.value = recipes.toList()
+        recipes.clear();
 
+        queriedRecipes.forEach { recipe ->
 
-//        recipes.clear();
-//
-//        queriedRecipes.forEach { recipe ->
-//
-//            var ingredients = mutableListOf<String>()
-//
-//            recipe.ingredientsList.forEach { ingredient ->
-//                ingredients.add(ingredient.name)
-//            }
-//
-//            val recipeTime = recipe.metadata.minutesToCook.toString() + " mins";
-//
-//            recipes.add(Recipe(recipe.name, ingredients, recipeTime, recipe.metadata.imageUrl))
-//        }
-//        liveRecipes.value = recipes.toList();
+            var ingredients = mutableListOf<String>()
+
+            recipe.ingredientsList.forEach { ingredient ->
+                ingredients.add(ingredient.name)
+            }
+
+            val recipeTime = recipe.metadata.minutesToCook.toString() + " mins";
+
+            recipes.add(Recipe(recipe.name, ingredients, recipeTime, recipe.metadata.imageUrl))
+        }
+        liveRecipes.value = recipes.toList();
     }
 }
