@@ -141,7 +141,7 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         get("users/shopping-list/"+item, createCallback<ShoppingList>(cb))
     }
 
-    fun RemoveItemFromShoppingList(item: String, cb: (ShoppingList)->Unit) {
+    fun removeItemFromShoppingList(item: String, cb: (ShoppingList)->Unit) {
         delete("users/shopping-list/"+item, createCallback<ShoppingList>(cb))
     }
 
