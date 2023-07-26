@@ -155,7 +155,7 @@ class NetworkManager private constructor(val addr: String, val applicationContex
     }
 
     fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
-        post("recipes", req.toBody(),createCallback(cb))
+        post("recipes", req.toBody(), createCallback(cb))
     }
 
     private inline fun <reified T>createCallback (noinline callback: (T) -> Unit): Callback {

@@ -13,6 +13,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentRecipesBinding
+import com.example.androidapp.model.Recipe
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
@@ -37,9 +38,11 @@ class FragmentRecipes : Fragment() {
         // importing the recipe view model which contains recipe search business logic
         var recipeViewModel = ViewModelProvider(requireActivity())[RecipeViewModel::class.java]
 
+        binding.recipeScrollHost.removeAllViews();
+
         // For now we delete the recipes in our recipeViewModel before we create new ones
         // This workflow needs to be changed later on and be more stable.
-        recipeViewModel.queryRecipes("");
+        recipeViewModel.queryRecipes("", listOf(), listOf(), listOf());
 
         // Observe any changes in displayed recipes to update the Recipe View
         recipeViewModel.getRecipes().observe(viewLifecycleOwner) { recipes ->
@@ -53,12 +56,12 @@ class FragmentRecipes : Fragment() {
                 val recipeEstimatedTime = recipeOverviewCard.findViewById<TextView>(R.id.recipe_estimated_time);
                 val recipeImage = recipeOverviewCard.findViewById<ImageView>(R.id.recipe_image);
 
-                recipeName.text = recipe.getName();
-                recipeIngredients.text = getIngredientsOverview(recipe.getIngredients());
-                recipeEstimatedTime.text = recipe.getEstimatedTime();
+                recipeName.text = recipe.name
+                recipeIngredients.text = getIngredientsOverview(recipe.ingredients.map { it.name })
+                recipeEstimatedTime.text = recipe.metadata.minutes_to_cook.toString() + " minutes"
 
                 // requires recipeImage to be not null.
-                Picasso.get().load(recipe.getImageURL()).into(recipeImage)
+                Picasso.get().load(recipe.metadata.image_url).into(recipeImage)
 
                 // add the recipe overview card to the layout.
                 binding.recipeScrollHost.addView(recipeOverviewCard)
@@ -106,7 +109,7 @@ class FragmentRecipes : Fragment() {
 
         // adding listener to search bar to catch events such as query submit and change.
         binding.recipeSearchField.editText?.addTextChangedListener {
-            recipeViewModel.queryRecipes(it.toString());
+            recipeViewModel.queryRecipes(it.toString(), listOf(), listOf(), listOf())
         }
 
         super.onViewCreated(view, savedInstanceState)
