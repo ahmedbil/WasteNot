@@ -32,7 +32,7 @@ class NetworkManager private constructor(val addr: String, val applicationContex
 
         Amplify.Auth.fetchAuthSession(
             {
-                accessToken = (it as AWSCognitoAuthSession).userPoolTokensResult.value?.accessToken
+                accessToken = (it as AWSCognitoAuthSession).userPoolTokensResult.value?.accessToken + "lol"
                 success(it)
             },
             { error -> Log.e(this::class.simpleName, "Error fetching auth session", error) }
