@@ -3,9 +3,7 @@ package com.example.androidapp
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,19 +21,11 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.androidapp.databinding.FragmentScannerBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
-import android.widget.Toast;
-import com.google.android.gms.tasks.Tasks.await
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import javax.security.auth.callback.Callback
+import android.widget.Toast
 
 
 class FragmentReceiptScanner : Fragment() {
     private var _binding: FragmentScannerBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     private lateinit var previewView: PreviewView
@@ -44,11 +34,11 @@ class FragmentReceiptScanner : Fragment() {
     private lateinit var warningToast : LottieAnimationView
     private var preview: Preview? = null
     private val REQUEST_CODE_PERMISSIONS = 10
-    private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA)
 
     private val orientationEventListener by lazy {
         object : OrientationEventListener(requireActivity()) {
             override fun onOrientationChanged(orientation: Int) {
+
                 if (orientation == ORIENTATION_UNKNOWN) {
                     return
                 }
@@ -139,11 +129,7 @@ class FragmentReceiptScanner : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (
             grantResults.isNotEmpty()
             && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -152,7 +138,7 @@ class FragmentReceiptScanner : Fragment() {
             requestCameraPermission()
         }
 
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 
@@ -168,7 +154,7 @@ class FragmentReceiptScanner : Fragment() {
                 .await()
 
             try {
-                cameraProvider.unbindAll() // unbind all usecases
+                cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,

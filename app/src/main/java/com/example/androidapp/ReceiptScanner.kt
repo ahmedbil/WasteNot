@@ -2,18 +2,12 @@ package com.example.androidapp
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.util.Log
-import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import androidx.core.text.isDigitsOnly
-import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import java.util.*
-import javax.inject.Singleton
-import kotlin.math.pow
 
 class ReceiptScanner private constructor() {
 
@@ -335,9 +329,7 @@ class ReceiptScanner private constructor() {
             }
 
             if (distance.toInt() <= threshold) {
-                //thresh /= 1.2
-                //Log.i("confidence", point.confidence.toString())
-                //blockExtractInstrumentation(point.text, pointX, pointY, topLeftPointX, topLeftPointY, imgWidth, distance)
+                blockExtractInstrumentation(point.text, pointX, pointY, topLeftPointX, topLeftPointY, imgWidth, distance)
                 updateAccuracyCheck(pointX, pointY, topLeftPointX, topLeftPointY, imgWidth, distance)
                 block.add(point)
 
@@ -365,8 +357,6 @@ class ReceiptScanner private constructor() {
             var block = mutableListOf<Text.Element>()
             val topLeftPoint = remainingPointsToGroup.minByOrNull {  sum(it.cornerPoints?.get(0)) }
             topLeftPoint?.let {topLeftText ->
-                //Log.i("topleft", topLeftText.text)
-                //Log.i("topLeft Point", "(${topLeftText.cornerPoints?.get(0)!!.x.toString()}, ${topLeftText.cornerPoints?.get(0)!!.y.toString()})")
 
                 block.add(topLeftText)
                 remainingPointsToGroup.remove(topLeftText)
