@@ -202,7 +202,7 @@ class FragmentReceiptScanner : Fragment() {
     }
 
     fun displayToastMessage(result : List<Pair<String, Pair<Double, String>>>?) {
-        var navFragment : Fragment = EditModeFragment();
+        var navFragment : Fragment = EditReceiptResultsFragment();
 
         var toastMessage : String = getString(R.string.success_toast)
 
