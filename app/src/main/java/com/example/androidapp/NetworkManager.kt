@@ -14,17 +14,25 @@ import com.amplifyframework.auth.result.AuthSignUpResult
 import com.amplifyframework.core.Amplify
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import java.io.IOException
+import com.example.androidapp.model.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class NetworkManager private constructor(val addr: String, val applicationContext: Context) {
     val client = OkHttpClient()
     var accessToken: String? = null
 
+
+    ////////////////////////////////////////
+    // User Login Session Functions Begin //
+    ////////////////////////////////////////
     fun amplifyInit(success: (AuthSession) -> Unit) {
         // Initialize Amplify for authentication purposes.
         Amplify.addPlugin(AWSCognitoAuthPlugin())
@@ -63,6 +71,10 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         Amplify.Auth.signIn(username, password, success, error)
     }
 
+    //////////////////////////////////////
+    // User Login Session Functions End //
+    //////////////////////////////////////
+
     fun buildRequest(method: String, path: String, body: RequestBody? = null): Request {
         var request = Request.Builder()
             .url("$addr/$path")
@@ -89,23 +101,55 @@ class NetworkManager private constructor(val addr: String, val applicationContex
     }
 
     fun getHeartbeat() {
-        get("heartbeat", heartBeatCallback)
+        get("heartbeat",
+            createCallback<String>(
+                {str -> Log.v(this::class.simpleName, "Heartbeat Response: $str")},
+                {str -> str}
+            )
+        )
     }
 
-    private var heartBeatCallback = object: Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e(this::class.simpleName, "Error doing the request: ${e.message}")
-        }
+    fun getInventory(cb: (Inventory)->Unit) {
+        get("users/inventory",createCallback<Inventory>(cb))
+    }
 
-        @Throws(IOException::class)
-        override fun onResponse(call: Call, response: Response) {
-            if (response.isSuccessful) {
-                val responseStr = response.body.string()
-                Log.v(this::class.simpleName, "Got response: ${responseStr}")
-            } else {
-                Log.e(this::class.simpleName, "Error: ${response.code}")
+    fun getShoppingList(cb: (ShoppingList)->Unit) {
+        get("users/inventory", createCallback<ShoppingList>(cb))
+    }
+
+    fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
+        post("recipes", req.toBody(),createCallback(cb))
+    }
+
+    private inline fun <reified T>createCallback (noinline callback: (T) -> Unit): Callback {
+        return createCallback(callback, deserializer())
+    }
+
+    private fun <T>createCallback (callback: (T) -> Unit, deserializer: (String) -> T): Callback {
+        return object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e(this::class.simpleName, "Error doing the request: ${e.message}")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val respString = response.body.string()
+                    Log.v(this::class.simpleName, "Got response: ${respString}")
+                    callback(deserializer(respString))
+                } else {
+                    Log.e(this::class.simpleName, "Error: ${response.code}")
+                }
             }
         }
+    }
+
+    private inline fun<reified T> serializer(): (T) -> String {
+        return {t: T -> Json.encodeToString(t)}
+    }
+
+    private inline fun<reified T> deserializer(): (String) -> T {
+        return {str:String -> Json.decodeFromString(str)}
     }
 
     companion object {
