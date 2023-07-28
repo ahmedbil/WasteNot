@@ -35,6 +35,13 @@ class InventoryViewModel : ViewModel() {
     fun addItems() {
     }
 
+    /*fun deleteItem(id : String) {
+        nwManager.deleteItemFromInventory(id) {
+
+        }
+
+    }*/
+
     fun deleteItems() {
     }
 

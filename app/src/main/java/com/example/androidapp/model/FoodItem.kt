@@ -1,24 +1,11 @@
 package com.example.androidapp.model
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
-import java.math.BigDecimal
-import java.time.LocalDate
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-
-object DateSerializer : KSerializer<LocalDate> {
-
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(value.toString())
-    override fun deserialize(decoder: Decoder): LocalDate = LocalDate.parse(decoder.decodeString())
-}
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 
 typealias Inventory = @Serializable HashMap<Long,FoodItem>
 typealias ShoppingList = @Serializable List<FoodItem>
@@ -34,4 +21,20 @@ data class FoodItem(
     val is_expiry_estimated: Boolean,
     val soft_delete: Boolean,
     val owners: List<String>
-)
+) {
+
+    fun toBody(): RequestBody {
+        val formBody = JSONObject()
+        formBody.put("name", name)
+        formBody.put("amount", amount)
+        formBody.put("amount_unit", amount_unit)
+        formBody.put("expiry_date", expiry_date)
+        formBody.put("purchase_date", purchase_date)
+        formBody.put("is_expiry_estimated", false)
+        formBody.put("soft_delete", false)
+        formBody.put("owners", JSONArray(owners))
+        return formBody.toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+    }
+
+}

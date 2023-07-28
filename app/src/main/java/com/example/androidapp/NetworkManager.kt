@@ -122,15 +122,15 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         get("users/inventory",createCallback<Inventory>(cb))
     }
 
-    fun getFoodItemFromInventory(foodItem: String, b: (Inventory)->Unit) {
+    fun getFoodItemFromInventory(foodItem: String, cb: (Inventory)->Unit) {
         get("users/inventory/"+foodItem, createCallback<Inventory>(cb))
     }
 
-    fun addFoodItemToInventory(foodItem: String, b: (Inventory)->Unit) {
-        post("users/inventory/", foodItem,createCallback<Inventory>(cb))
+    fun addFoodItemToInventory(foodItem: FoodItem, cb: (Inventory)->Unit) {
+        post("users/inventory/", foodItem.toBody(), createCallback<Inventory>(cb))
     }
 
-    fun deleteFoodItemFromInventory(foodItem: String, b: (Inventory)->Unit) {
+    fun deleteItemFromInventory(foodItem: String, cb: (Inventory)->Unit) {
         delete("users/inventory/"+foodItem,createCallback<Inventory>(cb))
     }
 
@@ -151,10 +151,10 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         delete("users/shopping-list", createCallback<ShoppingList>(cb))
     }
 
-    fun getAnalyticsData(cb: (Int)->Unit) {
+    /*fun getAnalyticsData(cb: (Int)->Unit) {
         get("users/inventory/analytics", createCallback<ShoppingList>(cb
         {intStr -> intStr.toInt()}))
-    }
+    }*/
 
     fun searchRecipesByName(req: RecipeRequest, cb: (List<Recipe>) -> Unit) {
         post("recipes", req.toBody(), createCallback(cb))
