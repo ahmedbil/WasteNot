@@ -25,7 +25,7 @@ class InventoryViewModel : ViewModel() {
 
             for ((id, item) in inventory) {
                 Log.i("hheeloo", "helloo")
-                items.add(Item(id.toInt(), item.name, item.amount.toDouble(), item.amountUnit, item.expiry_date.toString(), item.purchase_date.toString()))
+                items.add(Item(id.toInt(), item.name, item.amount.toDouble(), item.amount_unit, item.expiry_date.toString(), item.purchase_date.toString()))
             }
 
             liveItems.postValue(items.toList())
