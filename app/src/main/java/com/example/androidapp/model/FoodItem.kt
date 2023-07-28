@@ -5,8 +5,19 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import kotlinx.serialization.Serializable
 
-typealias Inventory = HashMap<Long,FoodItem>
-typealias ShoppingList = List<FoodItem>
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+
+@Serializer(forClass = LocalDate::class)
+object DateSerializer  {
+    fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(value.toString())
+    fun deserialize(decoder: Decoder): LocalDate = LocalDate.parse(decoder.decodeString())
+}
+
+typealias Inventory = @Serializable HashMap<Long,FoodItem>
+typealias ShoppingList = @Serializable List<FoodItem>
 
 @Serializable
 data class FoodItem(

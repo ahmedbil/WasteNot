@@ -14,21 +14,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentInventoryBinding
 
 private var _binding: FragmentInventoryBinding? = null
-val ingredient_list = mutableListOf<String>("Beef", "Rice noodles", "Cilantro")
-val ingredient_list_quant = mutableListOf<String>("250gm", "200gm", "10gm")
 
 // This property is only valid between onCreateView and
 // onDestroyView.
 private val binding get() = _binding!!
 
-class Adapter(private val ingredient_list: MutableList<String>, private val ingredient_list_quant: MutableList<String>) : RecyclerView.Adapter<Adapter.MyViewHolder>() {
+class Adapter() : RecyclerView.Adapter<Adapter.MyViewHolder>() {
 
     private val checkedItems = mutableListOf<Int>()
 
     private var checkboxVisibility = View.INVISIBLE
+
+    val items = mutableListOf<Item>()
     // This method creates a new ViewHolder object for each item in the RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // Inflate the layout for each item and return a new ViewHolder object
@@ -48,15 +50,21 @@ class Adapter(private val ingredient_list: MutableList<String>, private val ingr
     // This method returns the total
     // number of items in the data set
     override fun getItemCount(): Int {
-        return ingredient_list.size
+        return items.size
     }
 
     // This method binds the data to the ViewHolder object
     // for each item in the RecyclerView
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.ingredient.text = ingredient_list[position]
+        holder.ingredient.text = items[position].getName()
         //holder.quantity.text = ingredient_list_quant[position]
         holder.checkBox.visibility = checkboxVisibility
+    }
+
+    fun submitList(newData: List<Item>) {
+        items.clear()
+        items.addAll(newData)
+        notifyDataSetChanged()
     }
 
     fun toggleCheckBoxVisiblity() {
@@ -74,8 +82,9 @@ class Adapter(private val ingredient_list: MutableList<String>, private val ingr
     fun deleteItems(itemsToDelete: List<Int>) {
         val sortedItems = itemsToDelete.sortedDescending()
         sortedItems.forEach { position ->
-            ingredient_list.removeAt(position)
-            ingredient_list_quant.removeAt(position)
+            print(position)
+            //ingredient_list.removeAt(position)
+            //ingredient_list_quant.removeAt(position)
             notifyItemRemoved(position)
         }
         checkedItems.clear()
@@ -126,6 +135,7 @@ class FragmentInventory : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentInventoryBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -134,10 +144,15 @@ class FragmentInventory : Fragment() {
 
         // getting the ingredientlist
         // Assign ingredientlist to ItemAdapter
-        val itemAdapter = Adapter(ingredient_list, ingredient_list_quant)
+
 
         // Set the LayoutManager that
         // this RecyclerView will use.
+
+        val itemAdapter = Adapter()
+
+        var inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
+
         val recyclerView: RecyclerView = view.findViewById(R.id.ingredient_list)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -172,6 +187,11 @@ class FragmentInventory : Fragment() {
                 .addToBackStack(null) // Optional: Add to the back stack if you want to navigate back
                 .commit()
         }
+
+        inventoryViewModel.fetchItems()
+
+        inventoryViewModel.getItems().observe(viewLifecycleOwner, Observer { itemAdapter.submitList(it) })
+
     }
 
     override fun onDestroyView() {

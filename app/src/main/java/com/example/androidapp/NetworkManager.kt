@@ -20,8 +20,6 @@ import okhttp3.RequestBody
 import okhttp3.Response
 import java.io.IOException
 import com.example.androidapp.model.*
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -54,6 +52,10 @@ class NetworkManager private constructor(val addr: String, val applicationContex
             success,
             { Log.e(this::class.simpleName, "Failed to confirm sign up", it) }
         )
+    }
+
+    fun register(cb: (String) -> Unit) {
+        get("register", createCallback<String>(cb))
     }
 
     fun signOut(onComplete: (AuthSignOutResult) -> Unit) {
