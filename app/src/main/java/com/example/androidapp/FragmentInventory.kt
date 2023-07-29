@@ -26,7 +26,9 @@ private val binding get() = _binding!!
 
 class Adapter() : RecyclerView.Adapter<Adapter.MyViewHolder>() {
 
-    private val checkedItems = mutableListOf<Int>()
+    private lateinit var viewHolder: MyViewHolder
+
+    private val checkedItems = mutableListOf<Item>()
 
     private var checkboxVisibility = View.INVISIBLE
 
@@ -36,7 +38,7 @@ class Adapter() : RecyclerView.Adapter<Adapter.MyViewHolder>() {
         // Inflate the layout for each item and return a new ViewHolder object
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
 
-        val viewHolder = MyViewHolder(itemView)
+        viewHolder = MyViewHolder(itemView)
 
         viewHolder.ingredient.setOnLongClickListener {
             toggleCheckBoxVisiblity()
@@ -59,33 +61,41 @@ class Adapter() : RecyclerView.Adapter<Adapter.MyViewHolder>() {
         holder.ingredient.text = items[position].getName()
         //holder.quantity.text = ingredient_list_quant[position]
         holder.checkBox.visibility = checkboxVisibility
+
+        if (holder.checkBox.visibility == View.INVISIBLE) {
+            holder.checkBox.isChecked = false
+        }
+
     }
 
     fun submitList(newData: List<Item>) {
+        checkedItems.clear()
+
         items.clear()
+
         items.addAll(newData)
+
         notifyDataSetChanged()
     }
 
     fun toggleCheckBoxVisiblity() {
-        if (checkboxVisibility == CheckBox.VISIBLE)
-            checkboxVisibility = CheckBox.INVISIBLE
+        checkboxVisibility = if (checkboxVisibility == CheckBox.VISIBLE)
+            CheckBox.INVISIBLE
         else
-            checkboxVisibility = CheckBox.VISIBLE
+            CheckBox.VISIBLE
+
+        checkedItems.clear()
+
         notifyDataSetChanged()
     }
 
-    fun getSelectedItems(): List<Int> {
+    fun getSelectedItems(): List<Item> {
         return checkedItems
     }
 
-    fun deleteItems(itemsToDelete: List<Int>) {
-        val sortedItems = itemsToDelete.sortedDescending()
-        sortedItems.forEach { position ->
-            print(position)
-            //ingredient_list.removeAt(position)
-            //ingredient_list_quant.removeAt(position)
-            notifyItemRemoved(position)
+    fun deleteItems(itemsToDelete: List<Item>) {
+        itemsToDelete.forEach { item ->
+            notifyItemRemoved(items.indexOfFirst { it.getId() == item.getId() })
         }
         checkedItems.clear()
     }
@@ -107,16 +117,13 @@ class Adapter() : RecyclerView.Adapter<Adapter.MyViewHolder>() {
         //val quantity: TextView = itemView.findViewById(R.id.quantity)
 
         init {
-            ingredient.setOnClickListener {
-                checkBox.isChecked = !checkBox.isChecked
-            }
             checkBox.setOnCheckedChangeListener { _, isChecked ->
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     if (isChecked) {
-                        checkedItems.add(position)
+                        checkedItems.add(items[position])
                     } else {
-                        checkedItems.remove(position)
+                        checkedItems.remove(items[position])
                     }
                 }
             }
@@ -142,24 +149,15 @@ class FragmentInventory : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // getting the ingredientlist
-        // Assign ingredientlist to ItemAdapter
-
-
-        // Set the LayoutManager that
-        // this RecyclerView will use.
+        var inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
         val itemAdapter = Adapter()
-
-        var inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
         val recyclerView: RecyclerView = view.findViewById(R.id.ingredient_list)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        // adapter instance is set to the
-        // recyclerview to inflate the items.
-        recyclerView.adapter = itemAdapter
 
+        recyclerView.adapter = itemAdapter
 
         binding.scanItems.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
@@ -171,9 +169,10 @@ class FragmentInventory : Fragment() {
 
         binding.deleteItems.setOnClickListener {
             val selectedItems = itemAdapter.getSelectedItems()
-            itemAdapter.deleteItems(selectedItems)
+            inventoryViewModel.deleteItems(selectedItems)
+            //itemAdapter.deleteItems(selectedItems)
             itemAdapter.toggleCheckBoxVisiblity()
-            binding.deleteItems.visibility = View.GONE
+            itemAdapter.updateView()
         }
 
         binding.editItems.setOnClickListener{

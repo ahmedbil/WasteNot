@@ -51,7 +51,7 @@
                       android:layout_height="match_parent"
                       android:layout_alignParentRight="true"
                       android:layout_toRightOf="@+id/item_quantity"
-                      android:inputType="text"/>
+                      android:inputType="number"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="wrap_content"

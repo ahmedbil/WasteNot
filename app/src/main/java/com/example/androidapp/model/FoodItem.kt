@@ -25,14 +25,15 @@ data class FoodItem(
 
     fun toBody(): RequestBody {
         val formBody = JSONObject()
+        formBody.put("id", id)
         formBody.put("name", name)
         formBody.put("amount", amount)
         formBody.put("amount_unit", amount_unit)
         formBody.put("expiry_date", expiry_date)
         formBody.put("purchase_date", purchase_date)
-        formBody.put("is_expiry_estimated", false)
-        formBody.put("soft_delete", false)
-        formBody.put("owners", JSONArray(owners))
+        formBody.put("is_expiry_estimated", is_expiry_estimated)
+        formBody.put("soft_delete", soft_delete)
+        //formBody.put("owners", JSONArray(owners))
         return formBody.toString()
             .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }

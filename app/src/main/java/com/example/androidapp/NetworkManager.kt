@@ -122,16 +122,12 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         get("users/inventory",createCallback<Inventory>(cb))
     }
 
-    fun getFoodItemFromInventory(foodItem: String, cb: (Inventory)->Unit) {
-        get("users/inventory/"+foodItem, createCallback<Inventory>(cb))
-    }
-
-    fun addFoodItemToInventory(foodItem: FoodItem, cb: (Inventory)->Unit) {
-        post("users/inventory/", foodItem.toBody(), createCallback<Inventory>(cb))
+    fun addItemToInventory(foodItem: FoodItem, cb: (FoodItem)->Unit) {
+        post("users/inventory", foodItem.toBody(), createCallback<FoodItem>(cb))
     }
 
     fun deleteItemFromInventory(foodItem: String, cb: (Inventory)->Unit) {
-        delete("users/inventory/"+foodItem,createCallback<Inventory>(cb))
+        delete("users/inventory/${foodItem}", createCallback<Inventory>(cb))
     }
 
     fun getShoppingList(cb: (ShoppingList)->Unit) {
