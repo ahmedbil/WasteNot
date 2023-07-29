@@ -23,51 +23,59 @@ class MainActivity : AppCompatActivity() {
                 // Authenticate the user first.
                 val intent = Intent(this, AuthenticationActivity::class.java)
                 startActivity(intent)
-            }
-        }
+            } else {
+                runOnUiThread {
+                    setContentView(binding.root)
 
-        setContentView(binding.root)
+                    // Load the recipes page by default.
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, FragmentRecipes()).commit()
 
-        // Load the recipes page by default.
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
+                    // Set up listeners for the bottom navigation drawer.
+                    binding.bottomNavigation.setOnItemSelectedListener { item ->
+                        when (item.itemId) {
+                            R.id.page_recipes -> {
+                                binding.topAppBar.setTitle(R.string.recipes_title)
+                                // update the action bar for recipes search page
+                                updateActionBar();
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, FragmentRecipes()).commit()
+                                true
+                            }
 
-        // Set up listeners for the bottom navigation drawer.
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.page_recipes -> {
-                    binding.topAppBar.setTitle(R.string.recipes_title)
-                    // update the action bar for recipes search page
-                    updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentRecipes()).commit()
-                    true
+                            R.id.page_inventory -> {
+                                binding.topAppBar.setTitle(R.string.inventory_title)
+                                // update the action bar for inventory page
+                                updateActionBar();
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, FragmentInventory()).commit()
+                                true
+                            }
+
+                            R.id.page_analytics -> {
+                                binding.topAppBar.setTitle(R.string.analytics_title)
+                                // update the action bar for inventory page
+                                updateActionBar();
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, FragmentAnalytics()).commit()
+                                true
+                            }
+
+
+                            R.id.page_shopping_list -> {
+                                binding.topAppBar.setTitle(R.string.shopping_list_title)
+                                // update the action bar for inventory page
+                                updateActionBar();
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, FragmentShoppingList())
+                                    .commit()
+                                true
+                            }
+
+                            else -> false
+                        }
+                    }
                 }
-
-                R.id.page_inventory -> {
-                    binding.topAppBar.setTitle(R.string.inventory_title)
-                    // update the action bar for inventory page
-                    updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentInventory()).commit()
-                    true
-                }
-
-                R.id.page_analytics -> {
-                    binding.topAppBar.setTitle(R.string.analytics_title)
-                    // update the action bar for inventory page
-                    updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentAnalytics()).commit()
-                    true
-                }
-
-
-                R.id.page_shopping_list -> {
-                    binding.topAppBar.setTitle(R.string.shopping_list_title)
-                    // update the action bar for inventory page
-                    updateActionBar();
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentShoppingList()).commit()
-                    true
-                }
-
-                else -> false
             }
         }
     }

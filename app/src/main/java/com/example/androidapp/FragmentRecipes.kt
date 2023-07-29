@@ -13,7 +13,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentRecipesBinding
-import com.example.androidapp.model.Recipe
+import com.example.androidapp.model.FoodItem
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
@@ -40,21 +40,19 @@ class FragmentRecipes : Fragment() {
 
         binding.recipeScrollHost.removeAllViews();
 
-        // For now we delete the recipes in our recipeViewModel before we create new ones
-        // This workflow needs to be changed later on and be more stable.
-        recipeViewModel.queryRecipes("", listOf(), listOf(), listOf());
-
         // Observe any changes in displayed recipes to update the Recipe View
         recipeViewModel.getRecipes().observe(viewLifecycleOwner) { recipes ->
-            binding.recipeScrollHost.removeAllViews();
+            binding.recipeScrollHost.removeAllViews()
+            binding.recipeSuggestion.text = "Fetching recipes..."
 
-            recipes.forEach{recipe ->
+            recipes.forEach{ recipe ->
                 // Setting up specific recipe overview card for each recipe
-                val recipeOverviewCard = inflater.inflate(R.layout.recipe_overview_card, null);
-                val recipeName = recipeOverviewCard.findViewById<TextView>(R.id.recipe_name);
-                val recipeIngredients = recipeOverviewCard.findViewById<TextView>(R.id.recipe_ingredients);
-                val recipeEstimatedTime = recipeOverviewCard.findViewById<TextView>(R.id.recipe_estimated_time);
-                val recipeImage = recipeOverviewCard.findViewById<ImageView>(R.id.recipe_image);
+                val recipeOverviewCard = inflater.inflate(R.layout.recipe_overview_card, null)
+                val recipeName = recipeOverviewCard.findViewById<TextView>(R.id.recipe_name)
+                val recipeIngredients = recipeOverviewCard.findViewById<TextView>(R.id.recipe_ingredients)
+                val recipeEstimatedTime = recipeOverviewCard.findViewById<TextView>(R.id.recipe_estimated_time)
+                val recipeImage = recipeOverviewCard.findViewById<ImageView>(R.id.recipe_image)
+                val shoppingCartIcon = recipeOverviewCard.findViewById<ImageView>(R.id.shopping_cart)
 
                 recipeName.text = recipe.name
                 recipeIngredients.text = getIngredientsOverview(recipe.ingredients.map { it.name })
@@ -63,10 +61,20 @@ class FragmentRecipes : Fragment() {
                 // requires recipeImage to be not null.
                 Picasso.get().load(recipe.metadata.image_url).into(recipeImage)
 
+                shoppingCartIcon.setOnClickListener {
+                    NetworkManager.getInstance().addItemsToShoppingList(recipe.ingredients.map { FoodItem(0, it.name, 0.0, "", "", "", false, false, listOf()) }) {
+                        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragment_container, FragmentShoppingList())?.commit()
+                    }
+                }
+
                 // add the recipe overview card to the layout.
                 binding.recipeScrollHost.addView(recipeOverviewCard)
             }
+
+            binding.recipeSuggestion.text = "Based on your inventory..."
         }
+
+        recipeViewModel.queryRecipes("", listOf(), listOf(), listOf())
 
         return binding.root
     }

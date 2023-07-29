@@ -137,13 +137,17 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         post("users/inventory/delete-items", foodItemList, createCallback<Inventory>(cb))
     }
 
+    fun addItemsToShoppingList(foodItems: List<FoodItem>, cb: (Inventory) -> Unit) {
+        post("users/shopping-list/add-items", FoodItemList(foodItems).toBody(), createCallback<Inventory>(cb))
+    }
+
     fun getShoppingList(cb: (ShoppingList)->Unit) {
         get("users/shopping-list", createCallback<ShoppingList>(cb))
     }
 
     //additem to shoppinglist has @get endpoint annotation on backend
-    fun addItemToShoppingList(item: String, cb: (ShoppingList)->Unit) {
-        get("users/shopping-list/"+item, createCallback<ShoppingList>(cb))
+    fun addItemToShoppingList(item: String, cb: (Boolean)->Unit) {
+        get("users/shopping-list/"+item, createCallback<Boolean>(cb))
     }
 
     fun removeItemFromShoppingList(item: String, cb: (ShoppingList)->Unit) {
