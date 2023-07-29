@@ -1,5 +1,6 @@
 package com.example.androidapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -88,6 +89,7 @@ class EditModeFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -95,8 +97,8 @@ class EditModeFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_edit_mode, container, false)
 
         val recyclerView: RecyclerView = rootView.findViewById(R.id.recyclerView)
-        val addButton: MaterialButton = rootView.findViewById(R.id.addButton)
-        val saveButton: MaterialButton = rootView.findViewById(R.id.saveButton)
+        val addButton: MaterialButton = rootView.findViewById(R.id.add_items)
+        val cancelButton: MaterialButton = rootView.findViewById(R.id.cancel_items)
 
         val ingredientMutList = addIngredientsToMutList(ingredientsArray, ingredients)
 
@@ -118,8 +120,8 @@ class EditModeFragment : Fragment() {
             //saveChanges()
         }
 
-        saveButton.setOnClickListener {
-            saveChanges()
+        cancelButton.setOnClickListener {
+
         }
 
         return rootView

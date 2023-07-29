@@ -39,14 +39,31 @@ class InventoryViewModel : ViewModel() {
         }
     }
 
-    fun addItem(name : String, quantity : Double, unit : String, purchase : String, expiry : String) {
-        val foodItem = FoodItem(1, name, quantity, unit, purchase, expiry, false, false, listOf<String>())
+    fun addItems(foodItems : List<FoodItem>) {
 
-        nwManager.addItemsToInventory(listOf(foodItem)) {
+        nwManager.addItemsToInventory(foodItems) {
 
             fetchItems()
 
         }
+    }
+
+    fun addItem(name : String, quantity : Double, unit : String, purchase : String, expiry : String) {
+        val foodItem = listOf(FoodItem(1, name, quantity, unit, purchase, expiry, false, false, listOf<String>()))
+        addItems(foodItem)
+    }
+
+    fun addReceiptItems(receiptItems: List<Pair<String, Pair<Double, String>>>) {
+        var foodItems = mutableListOf<FoodItem>();
+
+        receiptItems.forEach {item ->
+            val name = item.first
+            val quantity = item.second.first
+            val unit = item.second.second
+            foodItems.add(FoodItem(1, name, quantity, unit, "5000-01-20", "5000-01-20", false, false, listOf<String>()))
+        }
+
+        addItems(foodItems.toList())
     }
 
     fun deleteItem(id : String) {

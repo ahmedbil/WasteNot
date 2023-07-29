@@ -32,6 +32,7 @@
     <string name="add_to_inventory">Add to Inventory</string>
     <string name="delete">Delete</string>
     <string name="add_item">Add Item</string>
+    <string name="add_items">Add Items</string>
     <string name="scan_items">Scan Items</string>
     <string name="remove_items">Remove Selected</string>
     <string name="edit_items">Edit Selected</string>

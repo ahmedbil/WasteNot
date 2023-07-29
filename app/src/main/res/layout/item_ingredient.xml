@@ -16,6 +16,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
+        android:inputType="text"
         android:hint="Ingredient Name"/>
 
     <EditText
@@ -23,13 +24,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:hint="Quantity"/>
     <EditText
         android:id="@+id/ingredientUnitEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:inputType="text"
         android:hint="Unit"/>
 
 </LinearLayout>
