@@ -85,6 +85,9 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         if (method.lowercase().contains("post"))
             request = request.post(body!!)
 
+        else if (method.lowercase().contains("delete"))
+            request = request.delete()
+
         return request.build()
     }
 
@@ -122,12 +125,15 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         get("users/inventory",createCallback<Inventory>(cb))
     }
 
-    fun addItemToInventory(foodItem: FoodItem, cb: (FoodItem)->Unit) {
-        post("users/inventory", foodItem.toBody(), createCallback<FoodItem>(cb))
+    fun addItemToInventory(foodItem: FoodItem, cb: (Inventory)->Unit) {
+        post("users/inventory", foodItem.toBody(), createCallback<Inventory>(cb))
     }
 
-    fun deleteItemFromInventory(foodItem: String, cb: (Inventory)->Unit) {
-        delete("users/inventory/${foodItem}", createCallback<Inventory>(cb))
+    fun deleteItemsFromInventory(foodItems: List<FoodItem>, cb: (Inventory)->Unit) {
+
+        val foodItemList = FoodItemList(foodItems).toBody()
+
+        post("users/inventory/delete-items", foodItemList, createCallback<Inventory>(cb))
     }
 
     fun getShoppingList(cb: (ShoppingList)->Unit) {
