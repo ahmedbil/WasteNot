@@ -8,9 +8,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="478dp"
+        android:layout_height="544dp"
         android:layout_above="@+id/buttonContainer"
-        android:layout_marginBottom="173dp"
+        android:layout_marginBottom="107dp"
         android:scrollbars="vertical">
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -25,11 +25,11 @@
             android:id="@+id/cancel_items"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" android:layout_marginRight="2dp" android:layout_weight="1"
-            android:text="@string/cancel" app:backgroundTint="#000" app:cornerRadius="5dp"/>
+            android:text="@string/cancel" app:cornerRadius="5dp"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_items"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" android:layout_weight="1" android:text="@string/add_items"
-            app:backgroundTint="#000" app:cornerRadius="5dp"/>
+            app:cornerRadius="5dp"/>
     </LinearLayout>
 </RelativeLayout>
