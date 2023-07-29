@@ -42,9 +42,9 @@ class InventoryViewModel : ViewModel() {
     fun addItem(name : String, quantity : Double, unit : String, purchase : String, expiry : String) {
         val foodItem = FoodItem(1, name, quantity, unit, purchase, expiry, false, false, listOf<String>())
 
-        nwManager.addItemToInventory(foodItem) {inventory ->
+        nwManager.addItemsToInventory(listOf(foodItem)) {
 
-            setItems(inventory)
+            fetchItems()
 
         }
     }
