@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/recipe_search_field"
-        android:id="@+id/textView"
+        android:id="@+id/recipe_suggestion"
         android:text="@string/recipe_suggestion_text"
         android:textSize="30sp"
         android:paddingBottom="10dp"
@@ -39,10 +39,10 @@
         android:id="@+id/recipeScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/textView"
+        android:layout_below="@id/recipe_suggestion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/recipe_suggestion">
 
         <LinearLayout android:id="@+id/recipeScrollHost" android:layout_width="match_parent"
             android:layout_height="wrap_content"

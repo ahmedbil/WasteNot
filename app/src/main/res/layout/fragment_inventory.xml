@@ -22,14 +22,14 @@
         android:id="@+id/edit_items"
         android:layout_width="match_parent"
         android:layout_height="57dp" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
-        android:text="@string/edit_items" app:backgroundTint="#000" app:cornerRadius="3dp"
+        android:text="@string/edit_items" app:cornerRadius="3dp"
         android:visibility="gone"
     />
     <com.google.android.material.button.MaterialButton
         android:id="@+id/delete_items"
         android:layout_width="match_parent"
         android:layout_height="57dp" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
-        android:text="@string/remove_items" app:backgroundTint="#000" app:cornerRadius="3dp"
+        android:text="@string/remove_items" app:cornerRadius="3dp"
         android:visibility="gone"
     />
     <LinearLayout
@@ -40,11 +40,11 @@
             android:id="@+id/add_item"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" android:layout_marginRight="2dp" android:layout_weight="1"
-            android:text="@string/add_item" app:backgroundTint="#000" app:cornerRadius="5dp"/>
+            android:text="@string/add_item" app:cornerRadius="5dp"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/scan_items"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" android:layout_weight="1" android:text="@string/scan_items"
-            app:backgroundTint="#000" app:cornerRadius="5dp"/>
+            app:cornerRadius="5dp"/>
     </LinearLayout>
 </LinearLayout>
