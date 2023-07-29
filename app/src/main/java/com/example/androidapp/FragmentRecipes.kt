@@ -36,14 +36,14 @@ class FragmentRecipes : Fragment() {
         _binding = FragmentRecipesBinding.inflate(inflater, container, false)
 
         // importing the recipe view model which contains recipe search business logic
-        var recipeViewModel = ViewModelProvider(requireActivity())[RecipeViewModel::class.java]
+        val recipeViewModel = ViewModelProvider(requireActivity())[RecipeViewModel::class.java]
 
-        binding.recipeScrollHost.removeAllViews();
+        binding.recipeScrollHost.removeAllViews()
 
         // Observe any changes in displayed recipes to update the Recipe View
         recipeViewModel.getRecipes().observe(viewLifecycleOwner) { recipes ->
-            binding.recipeScrollHost.removeAllViews()
-            binding.recipeSuggestion.text = "Fetching recipes..."
+                binding.recipeScrollHost.removeAllViews()
+                binding.recipeSuggestion.text = "Fetching recipes..."
 
             recipes.forEach{ recipe ->
                 // Setting up specific recipe overview card for each recipe
