@@ -7,23 +7,34 @@
         android:layout_height="match_parent"
         tools:context=".FragmentRecipes">
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="5dp"
+        android:padding="8dp"
+        app:strokeWidth="0dp"
+        android:backgroundTint="#eee"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
     <LinearLayout
+            android:padding="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 android:layout_margin="5dp"
                 android:padding="5dp"
+                app:strokeWidth="0dp"
                 android:elevation="10dp">
             <ImageView
                     android:layout_width="match_parent"
                     android:scaleType="centerCrop"
-                    android:layout_height="175dp" android:background="#555555"
+                    android:layout_height="175dp" android:background="#88888888"
                     android:id="@+id/recipe_image"/>
         </com.google.android.material.card.MaterialCardView>
 
@@ -31,12 +42,15 @@
                 android:id="@+id/RelativeLayout01"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="#0000"
                 android:padding="10dp">
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_toStartOf="@id/shopping_cart"
+                    android:background="@android:color/transparent"
                     android:id="@+id/recipe_name" android:text="Lamb Biryani" android:textSize="25sp"/>
 
             <ImageView
@@ -68,4 +82,5 @@
                     android:paddingLeft="5dp"/>
         </LinearLayout>
     </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

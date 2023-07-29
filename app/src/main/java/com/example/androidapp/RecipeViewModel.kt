@@ -12,6 +12,8 @@ class RecipeViewModel : ViewModel() {
     // list of recipes being displayed.
     private var liveRecipes =  MutableLiveData<List<Recipe>>()
 
+    var recipeSuggestionText = MutableLiveData<String>()
+
     fun getRecipes() : LiveData<List<Recipe>> {
         return liveRecipes;
     }

@@ -27,15 +27,17 @@ class NetworkManager private constructor(val addr: String, val applicationContex
     val client = OkHttpClient()
     var accessToken: String? = null
 
+    init {
+        Amplify.addPlugin(AWSCognitoAuthPlugin())
+        Amplify.configure(applicationContext)
+    }
+
+
 
     ////////////////////////////////////////
     // User Login Session Functions Begin //
     ////////////////////////////////////////
-    fun amplifyInit(success: (AuthSession) -> Unit) {
-        // Initialize Amplify for authentication purposes.
-        Amplify.addPlugin(AWSCognitoAuthPlugin())
-        Amplify.configure(applicationContext)
-
+    fun fetchAuth(success: (AuthSession) -> Unit) {
         Amplify.Auth.fetchAuthSession(
             {
                 accessToken = (it as AWSCognitoAuthSession).userPoolTokensResult.value?.accessToken
@@ -54,8 +56,8 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         )
     }
 
-    fun register(cb: (String) -> Unit) {
-        get("register", createCallback<String>(cb))
+    fun register(cb: (User) -> Unit) {
+        get("register", createCallback<User>(cb))
     }
 
     fun signOut(onComplete: (AuthSignOutResult) -> Unit) {
@@ -204,7 +206,9 @@ class NetworkManager private constructor(val addr: String, val applicationContex
         fun initialize(applicationContext: Context, success: (AuthSession) -> Unit): NetworkManager {
             if (instance == null) {
                 instance = NetworkManager("https://$domain", applicationContext)
-                instance!!.amplifyInit(success)
+                instance!!.fetchAuth(success)
+            } else {
+                instance!!.fetchAuth(success)
             }
             return instance!!
         }
