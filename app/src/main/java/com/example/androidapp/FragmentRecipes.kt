@@ -4,20 +4,16 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidapp.databinding.FragmentRecipesBinding
 import com.example.androidapp.model.FoodItem
-import com.example.androidapp.model.Recipe
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
@@ -81,51 +77,6 @@ class FragmentRecipes : Fragment() {
         recipeViewModel.queryRecipes("", listOf(), listOf(), listOf())
 
         return binding.root
-    }
-
-    fun showRecipePopup(recipeSelected: Recipe) {
-
-
-        println("Show recipe popup called")
-        val popUpCardView = layoutInflater.inflate(R.layout.recipe_popup,
-            null)
-        //popUpCardView.
-
-        val title = popUpCardView.findViewById<TextView>(R.id.title)
-
-        title.text = recipeSelected.name
-
-        val time = popUpCardView.findViewById<TextView>(R.id.time)
-
-        time.text = recipeSelected.metadata?.minutes_to_cook.toString()
-
-        val ingredientsList = popUpCardView.findViewById<TextView>(R.id.ingredients)
-
-        ingredientsList.text = "Ingredients: \n"
-        recipeSelected.ingredients.forEach{ it ->
-            ingredientsList.append(it + "\n")
-        }
-
-        val directionsList = popUpCardView.findViewById<TextView>(R.id.directions)
-
-        directionsList.text = "Directions: \n"
-        recipeSelected.steps.forEach{ it ->
-            directionsList.append(it + "\n")
-        }
-
-
-        popUpCardView.focusable = View.FOCUSABLE
-
-        val window = PopupWindow(popUpCardView, 1000, 1500)
-
-        window.showAtLocation(popUpCardView, Gravity.CENTER, 0, 50)
-
-        var close: Button = popUpCardView.findViewById(R.id.closeButton);
-        close.setOnClickListener {
-
-            window.dismiss()
-        };
-
     }
 
     // We want to only display a number of ingredients in the recipe overview card. As such
