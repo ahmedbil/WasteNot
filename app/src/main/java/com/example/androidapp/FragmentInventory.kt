@@ -146,51 +146,6 @@ class FragmentInventory : Fragment() {
         return binding.root
     }
 
-    fun showPopup(itemSelected: String) {
-
-
-        println("Show popup called")
-
-
-        val popUpCardView = layoutInflater.inflate(R.layout.inventory_item_popup,
-            null)
-
-
-        popUpCardView.focusable = View.FOCUSABLE
-
-        //popUpCardView.text
-
-        //val popupTextView = popUpCardView.findViewById<TextView>(R.id.textView)
-
-
-
-
-        val window = PopupWindow(popUpCardView, LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT, true)
-
-        window.showAtLocation(view, Gravity.CENTER, 0, 100)
-
-
-
-//        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-//        builder.setTitle("More info about item")
-//        builder.setMessage("Quantity: 300 g")
-//
-//        builder.setMessage("Purchase Date: January 1, 2019")
-//        builder.setMessage("Estimated expiry date: March 15, 2019")
-//
-//
-//
-//        builder.setPositiveButton("Close",
-//            DialogInterface.OnClickListener { dialog, which -> // Do something when the button is clicked
-//                //retVal = 1
-//                dialog.dismiss()
-//            })
-
-
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -203,25 +158,6 @@ class FragmentInventory : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         recyclerView.adapter = itemAdapter
-
-        recyclerView.addOnItemTouchListener(
-
-            RecyclerTouchListener(
-                requireContext(),
-                recyclerView,
-                object : RecyclerTouchListener.ClickListener {
-                    override fun onClick(view: View, position: Int) {
-                        println("ShowPopup called from onClick listener ")
-                        showPopup("potatoes")
-                        // Handle click event
-                    }
-
-                    override fun onLongClick(view: View, position: Int) {
-                        // Handle long click event
-                    }
-                }
-            )
-        )
 
         binding.scanItems.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentReceiptScanner()).commit()
