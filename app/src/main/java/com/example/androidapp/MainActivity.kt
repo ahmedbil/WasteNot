@@ -73,16 +73,6 @@ class MainActivity : AppCompatActivity() {
                                 true
                             }
 
-                            R.id.page_analytics -> {
-                                binding.topAppBar.setTitle("Analytucs")
-
-                                updateActionBar()
-                                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, FragmentCalendar()).commit()
-
-
-                                true
-                            }
-
                             else -> false
                         }
                     }
